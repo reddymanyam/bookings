@@ -123,13 +123,13 @@
         margin-right: 10px;
     }
 
-    input[type="date"] {
-        padding: 10px;
-        font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        margin-bottom: 20px;
-    }
+    /*input[type="date"] {*/
+    /*    padding: 10px;*/
+    /*    font-size: 16px;*/
+    /*    border: 1px solid #ccc;*/
+    /*    border-radius: 5px;*/
+    /*    margin-bottom: 20px;*/
+    /*}*/
 
 
     #slotsContainer {
@@ -199,7 +199,7 @@
     #second-section {
         display: none;
     }
-
+    
     header {
         height: 9vh;
         background-color: #000000;
@@ -318,9 +318,9 @@
         font-size: 14px;
     }
 
-    input[type="email"],
-    input[type="date"],
-    input[type="time"],
+    /*input[type="email"],*/
+    /*input[type="date"],*/
+    /*input[type="time"],*/
     select {
         width: 100%;
         padding: 10px;
@@ -400,3 +400,9 @@
         background-color: grey;
         margin: 20px 0;
     }
+    
+    /* external section css */
+    #secondgroup{
+        display:none;
+    }
+    

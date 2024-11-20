@@ -24,40 +24,36 @@
         <div class="flex justify-left items-center mb-20">
             <form id="externalclientbookingForm">
                 <div class="flex flex-col gap-6 break-words">
-                    <!-- First Group: Name, Number, Email, and Company Name -->
+                    <!-- First Group -->
                     <div class="grid grid-cols-2 gap-6">
                         <!-- Name Field -->
                         <div>
-                            <label for="customer">Name</label>
-                            <input type="text" id="externalclientname" name="customer" autocomplete="off">
-                            <div id="customerSuggestions" class="suggestions"></div>
+                            <label for="externalclientname">Name</label>
+                            <input type="text" id="externalclientname" name="customer" autocomplete="off" required />
                         </div>
 
                         <!-- Number Field -->
                         <div>
-                            <label for="number">Number</label>
-                            <input type="number" id="externalclientnumber" name="number" autocomplete="off">
-                            <div id="numberSuggestions" class="suggestions"></div>
+                            <label for="externalclientnumber">Number</label>
+                            <input type="number" id="externalclientnumber" name="number" autocomplete="off" required />
                         </div>
 
                         <!-- Email Field -->
                         <div>
-                            <label for="email">Email</label>
-                            <input type="text" id="externalclientemail" autocomplete="off" />
-                            <div id="emailSuggestions" class="suggestions"></div>
+                            <label for="externalclientemail">Email</label>
+                            <input type="email" id="externalclientemail" autocomplete="off" required />
                         </div>
 
                         <!-- Company Name Field -->
                         <div>
-                            <label for="companyname">Company Name</label>
+                            <label for="company">Company Name</label>
                             <input type="text" id="company" autocomplete="off" />
-                            <div id="companySuggestions" class="suggestions"></div>
                         </div>
                     </div>
 
-                    <!-- Second Group: Remaining Fields -->
-                    <div class="grid grid-cols-2 gap-6">
-                        <!-- Lead ID Field -->
+                    <!-- Second Group -->
+                    <div class="grid grid-cols-2 gap-6" id="secondgroup">
+                        <!-- Lead ID -->
                         <div>
                             <label for="lead_id">Lead ID</label>
                             <select id="lead_id">
@@ -65,7 +61,7 @@
                             </select>
                         </div>
 
-                        <!-- Location Field -->
+                        <!-- Location -->
                         <div>
                             <label for="location">Location</label>
                             <select id="location">
@@ -73,7 +69,7 @@
                             </select>
                         </div>
 
-                        <!-- Room Type Field -->
+                        <!-- Room Type -->
                         <div>
                             <label for="room_type">Room Type</label>
                             <select id="room_type">
@@ -81,7 +77,7 @@
                             </select>
                         </div>
 
-                        <!-- Room Field -->
+                        <!-- Room -->
                         <div>
                             <label for="room">Room</label>
                             <select id="room">
@@ -89,13 +85,14 @@
                             </select>
                         </div>
 
-                        <!-- Booking Date Field -->
+                        <!-- Booking Date -->
                         <div>
                             <label for="booking_date">Booking Date</label>
-                            <input type="date" id="booking_date" name="booking_date" value="">
+                            <input type="date" id="booking_date" name="booking_date" value=""
+                                />
                         </div>
 
-                        <!-- Money Collected Field -->
+                        <!-- Money Collected -->
                         <div>
                             <label for="money_collected">Money Collected</label>
                             <select id="money_collected_dropdown">
@@ -104,7 +101,7 @@
                             </select>
                         </div>
 
-                        <!-- Card Status Field -->
+                        <!-- Card Status -->
                         <div>
                             <label for="card_status">Card Status</label>
                             <select id="card_status_dropdown">
@@ -113,45 +110,39 @@
                             </select>
                         </div>
 
-                        <!-- Price per Hour Field -->
+                        <!-- Price Per Hour -->
                         <div>
                             <label for="rate">Price per hour (in ₹)</label>
-                            <p name="rate" id="price_per_hour"> 0 </p>
+                            <p id="price_per_hour" class="font-bold text-lg">0</p>
                         </div>
 
-                        <!-- Check Out Button -->
-                        <div class="flex items-center justify-center">
-                            <button type="button" class="btn btn-active submitBtn" onclick="showModal()">Check Out</button>
-                        </div>
+                      
                     </div>
+                      <!-- Check Out Button -->
+                        <div class="flex items-center justify-center">
+                            <button type="button" class="btn btn-active w-28" onclick="checkLeads()">Check Out</button>
+                        </div>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal for No Lead Found Message -->
+    <!-- Modal -->
     <dialog id="my_modal_checkLeads" class="modal">
         <div class="modal-box">
             <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeModal()">✕</button>
-            <div class="modalContent text-center">
-                <h3 class="font-bold text-lg mb-4">No Lead Found</h3>
-                <p class="mb-4">It appears that there is no lead associated with this booking.</p>
-                <div class="flex justify-center gap-4">
-                    <button class="btn btn-primary" onclick="createLead()">Create Lead</button>
-                    <button class="btn" onclick="closeModal()">Close</button>
-                </div>
+            <h3 class="font-bold text-lg mb-4">No Lead Found</h3>
+            <div class="flex justify-center gap-4">
+                <button class="btn btn-active w-32" onclick="createLead()">Create Lead</button>
             </div>
         </div>
     </dialog>
 
-    <!-- Page Footer -->
-    <footer>
-        <span style="font-size: 14px; margin: 0;">&copy; Copyright 2024 Novel Office.</span>
+    <!-- Footer -->
+    <footer class="p-4 text-center text-sm">
+        &copy; Copyright 2024 Novel Office.
     </footer>
 
-    <script src="script.js">
-       
-    </script>
 </body>
 
 </html>
