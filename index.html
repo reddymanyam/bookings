@@ -16,337 +16,99 @@
         <img src="https://noveloffice.in/wp-content/uploads/2023/08/novel-office-logo.webp" height="auto"
             alt="Novel Logo" title="Novel Office" style="max-width: 230px;">
     </header>
-
-    <!-- Two navigation buttons -->
-    <div id="navbar">
-        <div class="sidebar-item p-2 cursor-pointer transition-colors" id="dashboard-btn">All Bookings</div>
-        <div class="sidebar-item p-2 cursor-pointer transition-colors" id="newbooking-btn">New Booking</div>
-    </div>
-
-    <!-- First Section -->
-    <div class="flex items-center justify-center flex-col pt-2" id="first-section">
+    <div>
         <div class="p-4 font-semibold text-xl flex justify-center">
-            <h3><span class="text-purple-800">All</span> Bookings</h3>
-        </div>
-
-        <!-- Filter data -->
-        <div class="flex-wrap flex items-center justify-center gap-10 mb-6">
-            <!-- Location -->
-            <div class="flex flex-column justify-center w-44">
-                <label for="location_filter" class="font-weight-bold">Location : </label>
-                <select id="location_filter">
-                    <option value="">Select </option>
-                </select>
-            </div>
-            <!-- Room Type -->
-            <div class="flex flex-column justify-center w-44">
-                <label for="room_type_filter" class="font-weight-bold">Room Type : </label>
-                <select id="room_type_filter">
-                    <option value="">Select </option>
-                </select>
-            </div>
-
-            <!-- Room -->
-            <div class="flex flex-column justify-center w-44">
-                <label for="room_filter" class="font-weight-bold">Room : </label>
-                <select id="room_filter">
-                    <option value="">Select </option>
-                </select>
-            </div>
-            <!-- Booking Date -->
-            <div class="flex flex-column justify-center w-44">
-                <label for="booking_date_filter" class="font-weight-bold">Booking Date : </label>
-                <input type="date" id="booking_date_filter" value="">
-            </div>
-        </div>
-
-        <div class="container flex items-center justify-center px-2">
-            <div class="overflow-x-auto w-full">
-                <table class="table table-zebra">
-                    <!-- head -->
-                    <thead>
-                        <tr class="hover">
-                            <th>SL.No</th>
-                            <th>Customer</th>
-                            <th>Date</th>
-                            <th>Location</th>
-                            <th>Room type</th>
-                            <th class="text-purple-800">Room Name</th>
-                            <th>Client type</th>
-                            <th class="text-green-800">Start time</th>
-                            <th class="text-red-800">End time</th>
-                            <th class="font-bold">Price (in ₹)</th>
-                            <th class="font-bold">Card Status</th>
-                            <th class="font-bold">Money collected</th>
-                        </tr>
-                    </thead>
-                    <tbody class="tableBody">
-
-                        <!--This content is appending from java script-->
-
-                    </tbody>
-                </table>
-
-                <div class="noRecordsDiv flex justify-center items-center">
-                    <!-- No records Div -->
-                    <!--This content is appending from java script-->
-                </div>
-
-                <div class="pagination-controls-pending mb-10">
-                    <button class="prev-page-pending">Previous</button>
-                    <span class="page-number-pending">
-                        <span id="current-page-pending">1</span>
-                        &nbsp;of&nbsp;
-                        <span id="total-pages-pending">1</span>
-                    </span>
-                    <button class="next-page-pending">Next</button>
-                </div>
-            </div>
-
-
-            <!-- You can open the modal using ID.showModal() method -->
-            <dialog id="my_modal_3" class="modal">
-                <div class="modal-box" style="min-width: 50%;">
-                    <!--<form method="dialog">-->
-                    <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 closeBtn">✕</button>
-                    <!--</form>-->
-                    <div class="modalContent flex items-center justify-center gap-2 flex-col">
-                        <div class="singleContent">
-                            <div class="flex flex-col justify-center items-center w-full h-full">
-                                <div class="">
-                                    <div class="p-5 ">
-                                        <div class=" grid grid-cols-2 mb-4">
-                                            <div>
-                                                <h2 class="pass-id text-xl font-bold undeline">Sample layout</h2>
-                                            </div>
-                                            <div class="card text-white status flex items-center justify-center p-2">
-                                                <p>
-                                                    Accepted
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <!-- Bookings Details -->
-                                        <div>
-                                            <div class="grid grid-cols-2 gap-4 break-words">
-                                                <div>
-                                                    <h5 class="text-xs">Customer</h5>
-                                                    <h2 class="text-2sm font-bold" id="fullname-field">-------</h2>
-                                                </div>
-                                                <div>
-                                                    <h5 class="text-xs">Email</h5>
-                                                    <h2 class="text-2sm font-bold" id="email-field">-------</h2>
-                                                </div>
-                                                <div>
-                                                    <h5 class="text-xs">Location</h5>
-                                                    <h2 class="text-2sm font-bold" id="company-field">-------</h2>
-                                                </div>
-                                                <div>
-                                                    <h5 class="text-xs">Room Type</h5>
-                                                    <h2 class="text-2sm font-bold" id="leadId">-------</h2>
-                                                </div>
-
-                                                <!-- Div to show money collected and card status -->
-                                                <div class="readOnlyDiv">
-                                                    <h5 class="text-xs">Money Collected</h5>
-                                                    <h2 class="text-2sm font-bold" id="money_collected_show">-------
-                                                    </h2>
-                                                </div>
-                                                <div class="readOnlyDiv">
-                                                    <h5 class="text-xs">Card Status</h5>
-                                                    <h2 class="text-2sm font-bold" id="card_status_show">-------
-                                                    </h2>
-                                                </div>
-
-                                                <div>
-                                                    <h5 class="text-xs">Client Type</h5>
-                                                    <h2 class="text-2sm font-bold" id="clientType">-------
-                                                    </h2>
-                                                </div>
-                                                <div>
-                                                    <h5 class="text-xs">Date</h5>
-                                                    <h2 class="text-2sm font-bold" id="myDate">-------</h2>
-                                                </div>
-                                                <div>
-                                                    <h5 class="text-xs text-green-800">Start Time</h5>
-                                                    <h2 class="text-2sm font-bold text-green-800" id="startTime">-------
-                                                    </h2>
-                                                </div>
-                                                <div>
-                                                    <h5 class="text-xs text-red-800">End Time</h5>
-                                                    <h2 class="text-2sm font-bold text-red-800" id="endTime">-------
-                                                    </h2>
-                                                </div>
-                                                <div>
-                                                    <h5 class="text-xs">Price (in ₹)</h5>
-                                                    <h2 class="text-2sm font-bold text-blue-700" id="price">-------</h2>
-                                                </div>
-                                            </div>
-
-                                            <div class="mt-2 mb-2">
-                                                <h5 class="text-xs text-purple-800">Room Name</h5>
-                                                <h2 class="text-2sm font-bold text-purple-800" id="date-field">-------
-                                                </h2>
-                                            </div>
-
-                                            <!-- Div to show and edit money collected and card status -->
-                                            <div id="editDiv">
-                                                <hr class="new-divider">
-                                                <div class="flex justify-around items-center mt-2">
-                                                    <!-- Money Collected -->
-                                                    <div id="money_collected_div">
-                                                        <label for="money_collected" class="text-xs">Money
-                                                            Collected</label>
-                                                        <select id="money_collected" name="money_collected">
-                                                            <option value="No">No</option>
-                                                            <option value="Yes">Yes</option>
-                                                        </select>
-                                                    </div>
-
-                                                    <!-- Card Status -->
-                                                    <div class="mt-2">
-                                                        <label for="card_status" class="text-xs">Card Status</label>
-                                                        <select id="card_status" name="card_status">
-                                                            <option value="Not issued">Not issued</option>
-                                                            <option value="Issued">Issued</option>
-                                                            <option value="Returned">Returned</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="mt-10">
-                                                <button type="submit" class="btn btn-active submitRecordBtn">
-                                                    Submit
-                                                </button>
-                                            </div>
-
-                                            <!-- Toast -->
-                                            <div class="toast h-[4rem] w-[18rem] bg-green-600">
-                                                <h2>
-                                                    <i class="fa-solid fa-circle-check bg-green-600"></i>
-                                                    <span>Updated Successful</span>
-                                                </h2>
-                                            </div>
-
-                                        </div>
-
-
-                                        <!-- <div class="grid grid-cols-2 gap-4 break-words mt-2">
-                                            <div class="flex align-center">
-                                                <label for="myDate">Date: </label>
-                                                <input type="date" id="myDate" value="">
-                                            </div>
-                                        </div> -->
-
-                                        <div class="color-shade hidden">
-                                            <div style="display: flex; align-items: center; justify-content: center;">
-                                                <div
-                                                    style="background-color: #4caf50; height: 2rem; width: 2rem; border-radius: 50%;">
-                                                </div>
-                                                <p>&nbsp;-----> &nbsp;New slots</p>
-                                            </div>
-
-                                            <div style="display: flex; align-items: center; justify-content: center;">
-                                                <div
-                                                    style="background-color: #999999b8; height: 2rem; width: 2rem; border-radius: 50%;">
-                                                </div>
-                                                <p>&nbsp;-----> &nbsp;Other selected Slots</p>
-                                            </div>
-
-                                            <div style="display: flex; align-items: center; justify-content: center;">
-                                                <div
-                                                    style="background-color: #2f41ec; height: 2rem; width: 2rem; border-radius: 50%;">
-                                                </div>
-                                                <p>&nbsp;-----> &nbsp;This record selected slots</p>
-                                            </div>
-                                            <div style="display: flex; align-items: center; justify-content: center;">
-                                                <div
-                                                    style="background-color: #ec2f2f; height: 2rem; width: 2rem; border-radius: 50%;">
-                                                </div>
-                                                <p>&nbsp;-----> &nbsp;This slot has mutliple selection</p>
-                                            </div>
-                                        </div>
-                                        <div class="hidden" id="slotsContainer"></div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                        <!-- <select class="select select-info w-full max-w-xs statusDropdown">
-                            <option>Approved</option>
-                            <option>Rejected</option>
-                        </select>
-                        <button class="btn btn-active submitBtn">Submit</button> -->
-                    </div>
-                </div>
-            </dialog>
-        </div>
-    </div>
-
-    <!-- Second Section -->
-    <div id="second-section">
-        <div class="p-4 font-semibold text-xl flex justify-center">
-            <h3><span class="text-purple-800">New</span> Booking</h3>
+            <h3><span class="text-purple-800">External Client</span> Booking</h3>
         </div>
 
         <div class="flex justify-center items-center  mb-20">
-            <form id="bookingForm">
-                <div class="flex flex-row justify-around gap-6 items-center">
-                    <!-- Customer -->
-                    <div class="grid grid-cols-2 gap-4 break-words">
+            <form id="externalclientbookingForm">
+
+
+                <div class="flex flex-col gap-6 ">
+
+                    <!-- First Group: Name, Number, Email, and Company Name -->
+                    <div class="grid grid-cols-2 gap-6">
+                        <!-- Name Field -->
                         <div>
-                            <label for="customer">Customer</label>
-                            <input type="text" id="customer" name="customer" autocomplete="off">
+                            <label for="customer">Name</label>
+                            <input type="text" id="externalclientname" name="customer" autocomplete="off">
                             <div id="customerSuggestions" class="suggestions"></div>
                         </div>
 
+                        <!-- Number Field -->
                         <div>
-                            <label for="location">Lead ID</label>
-                            <select id="lead_id">
-                                <option value="">Select Lead</option>
-                            </select>
+                            <label for="number">Number</label>
+                            <input type="number" id="number" name="number" autocomplete="off">
+                            <div id="numberSuggestions" class="suggestions"></div>
                         </div>
 
-                        <!-- Email -->
+                        <!-- Email Field -->
                         <div>
                             <label for="email">Email</label>
                             <input type="text" id="email" autocomplete="off" />
                             <div id="emailSuggestions" class="suggestions"></div>
                         </div>
-                        <!-- Location -->
+
+                        <!-- Company Name Field -->
+                        <div>
+                            <label for="companyname">Company Name</label>
+                            <select id="companyname">
+                                <option value="">Select Company</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Second Group: Remaining Fields -->
+                    <div class="grid grid-cols-2 gap-6">
+                        <!-- Lead ID Field -->
+                        <div>
+                            <label for="lead_id">Lead ID</label>
+                            <select id="lead_id">
+                                <option value="">Select Lead</option>
+                            </select>
+                        </div>
+
+                        <!-- Location Field -->
                         <div>
                             <label for="location">Location</label>
                             <select id="location">
                                 <option value="">Select Location</option>
                             </select>
                         </div>
-                        <!-- Room Type -->
+
+                        <!-- Room Type Field -->
                         <div>
                             <label for="room_type">Room Type</label>
                             <select id="room_type">
-                                <!-- <option value="">Select Room Type</option> -->
+                                <option value="">Select Room Type</option>
                             </select>
                         </div>
 
-                        <!-- Room -->
+                        <!-- Room Field -->
                         <div>
                             <label for="room">Room</label>
                             <select id="room">
-                                <!-- <option value="">Select Room</option> -->
+                                <option value="">Select Room</option>
                             </select>
                         </div>
 
-                        <!-- Money collected -->
+                        <!-- Booking Date Field -->
                         <div>
-                            <label for="money_collected">Money collected</label>
+                            <label for="booking_date">Booking Date</label>
+                            <input type="date" id="booking_date" name="booking_date" value="">
+                        </div>
+
+                        <!-- Money Collected Field -->
+                        <div>
+                            <label for="money_collected">Money Collected</label>
                             <select id="money_collected_dropdown">
                                 <option value="No">No</option>
                                 <option value="Yes">Yes</option>
                             </select>
                         </div>
 
-                        <!-- Card Status -->
+                        <!-- Card Status Field -->
                         <div>
                             <label for="card_status">Card Status</label>
                             <select id="card_status_dropdown">
@@ -355,56 +117,24 @@
                             </select>
                         </div>
 
-                        <!-- Booking Date -->
-                        <div>
-                            <label for="booking_date">Booking Date</label>
-                            <input type="date" id="booking_date" name="booking_date" value="">
-                        </div>
-
-                        <!-- Price per hour -->
+                        <!-- Price per Hour Field -->
                         <div>
                             <label for="rate">Price per hour (in ₹)</label>
                             <p name="rate" id="price_per_hour"> 0 </p>
                         </div>
 
-                        <!-- Price per hour -->
-                        <div>
-                            <label for="total_price">Total price (in ₹)</label>
-                            <p name="total_price" id="total_price"> 0 </p>
-                        </div>
-
+                        <!-- Check Out Button -->
                         <div class="flex items-center justify-center">
-                            <button type="submit" class="btn btn-active submitBtn">Submit</button>
-                        </div>
-                    </div>
-
-                    <div class="flex-col justify-between items-center">
-                        <!-- Slots Container -->
-                        <div id="newSlotsContainer">
-
-                        </div>
-                        <!-- Clear Selection button -->
-                        <div class="flex justify-center items-center cursor-pointer bg-red-500 font-bold hover:bg-red-700 text-white hover:border-1 hover:border-grey py-2 rounded-md"
-                            id="clearButton">
-                            Clear Selection
+                            <button type="submit" class="btn btn-active submitBtn">Check Out</button>
                         </div>
                     </div>
                 </div>
+
 
             </form>
         </div>
     </div>
 
-    <!-- Dialog div -->
-    <dialog id="my_modal_1" class="modal">
-        <div class="modal-box">
-            <h3 class="text-lg font-bold">Alert!</h3>
-            <p class="py-4">Kindly login and refresh this page.</p>
-            <div class="modal-action">
-                <a href="/login" target="_blank"><button class="btn">Login</button></a>
-            </div>
-        </div>
-    </dialog>
 
     <!-- Page Footer -->
     <footer>
