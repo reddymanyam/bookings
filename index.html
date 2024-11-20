@@ -21,7 +21,7 @@
             <h3><span class="text-purple-800">External Client</span> Booking</h3>
         </div>
 
-        <div class="flex justify-left items-center  mb-20">
+        <div class="flex justify-left items-center mb-20">
             <form id="externalclientbookingForm">
                 <div class="flex flex-col gap-6 break-words">
                     <!-- First Group: Name, Number, Email, and Company Name -->
@@ -121,7 +121,7 @@
 
                         <!-- Check Out Button -->
                         <div class="flex items-center justify-center">
-                            <button type="button" id="checkoutButton" class="btn btn-active submitBtn">Check Out</button>
+                            <button type="button" class="btn btn-active submitBtn" onclick="showModal()">Check Out</button>
                         </div>
                     </div>
                 </div>
@@ -129,39 +129,28 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <div class="modal" id="noLeadModal">
+    <!-- Modal for No Lead Found Message -->
+    <dialog id="my_modal_checkLeads" class="modal">
         <div class="modal-box">
-            <h3 class="font-bold text-lg">No Lead Found</h3>
-            <p class="py-4">Please create a new lead if it doesn't exist.</p>
-            <div class="modal-action">
-                <button class="btn btn-primary" onclick="createLead()">Create Lead</button>
-                <button class="btn" onclick="closeModal()">Close</button>
+            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeModal()">✕</button>
+            <div class="modalContent text-center">
+                <h3 class="font-bold text-lg mb-4">No Lead Found</h3>
+                <p class="mb-4">It appears that there is no lead associated with this booking.</p>
+                <div class="flex justify-center gap-4">
+                    <button class="btn btn-primary" onclick="createLead()">Create Lead</button>
+                    <button class="btn" onclick="closeModal()">Close</button>
+                </div>
             </div>
         </div>
-    </div>
+    </dialog>
 
     <!-- Page Footer -->
     <footer>
         <span style="font-size: 14px; margin: 0;">&copy; Copyright 2024 Novel Office.</span>
     </footer>
 
-    <script>
-        // Function to show the modal
-        document.getElementById("checkoutButton").addEventListener("click", function () {
-            document.getElementById("noLeadModal").classList.add("modal-open");
-        });
-
-        // Function to close the modal
-        function closeModal() {
-            document.getElementById("noLeadModal").classList.remove("modal-open");
-        }
-
-        // Dummy function to create a lead
-        function createLead() {
-            alert("Create Lead functionality to be implemented.");
-            closeModal();
-        }
+    <script src="script.js">
+       
     </script>
 </body>
 
