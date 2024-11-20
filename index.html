@@ -21,12 +21,9 @@
             <h3><span class="text-purple-800">External Client</span> Booking</h3>
         </div>
 
-        <div class="flex justify-center items-center  mb-20">
+        <div class="flex justify-left items-center  mb-20">
             <form id="externalclientbookingForm">
-
-
-                <div class="flex flex-col gap-6 ">
-
+                <div class="flex flex-col gap-6 break-words">
                     <!-- First Group: Name, Number, Email, and Company Name -->
                     <div class="grid grid-cols-2 gap-6">
                         <!-- Name Field -->
@@ -39,23 +36,22 @@
                         <!-- Number Field -->
                         <div>
                             <label for="number">Number</label>
-                            <input type="number" id="number" name="number" autocomplete="off">
+                            <input type="number" id="externalclientnumber" name="number" autocomplete="off">
                             <div id="numberSuggestions" class="suggestions"></div>
                         </div>
 
                         <!-- Email Field -->
                         <div>
                             <label for="email">Email</label>
-                            <input type="text" id="email" autocomplete="off" />
+                            <input type="text" id="externalclientemail" autocomplete="off" />
                             <div id="emailSuggestions" class="suggestions"></div>
                         </div>
 
                         <!-- Company Name Field -->
                         <div>
                             <label for="companyname">Company Name</label>
-                            <select id="companyname">
-                                <option value="">Select Company</option>
-                            </select>
+                            <input type="text" id="company" autocomplete="off" />
+                            <div id="companySuggestions" class="suggestions"></div>
                         </div>
                     </div>
 
@@ -125,21 +121,48 @@
 
                         <!-- Check Out Button -->
                         <div class="flex items-center justify-center">
-                            <button type="submit" class="btn btn-active submitBtn">Check Out</button>
+                            <button type="button" id="checkoutButton" class="btn btn-active submitBtn">Check Out</button>
                         </div>
                     </div>
                 </div>
-
-
             </form>
         </div>
     </div>
 
+    <!-- Modal -->
+    <div class="modal" id="noLeadModal">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">No Lead Found</h3>
+            <p class="py-4">Please create a new lead if it doesn't exist.</p>
+            <div class="modal-action">
+                <button class="btn btn-primary" onclick="createLead()">Create Lead</button>
+                <button class="btn" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Page Footer -->
     <footer>
         <span style="font-size: 14px; margin: 0;">&copy; Copyright 2024 Novel Office.</span>
     </footer>
+
+    <script>
+        // Function to show the modal
+        document.getElementById("checkoutButton").addEventListener("click", function () {
+            document.getElementById("noLeadModal").classList.add("modal-open");
+        });
+
+        // Function to close the modal
+        function closeModal() {
+            document.getElementById("noLeadModal").classList.remove("modal-open");
+        }
+
+        // Dummy function to create a lead
+        function createLead() {
+            alert("Create Lead functionality to be implemented.");
+            closeModal();
+        }
+    </script>
 </body>
 
 </html>
