@@ -1,17 +1,3 @@
-frappe.ready(function() {
-    
-})
-   
-// Function to show the loader
-function showLoader() {
-    document.getElementById("loader").classList.remove("hidden");
-}
-
-// Function to hide the loader
-function hideLoader() {
-    document.getElementById("loader").classList.add("hidden");
-}
-
 // Updated function to handle API call and modal display
 async function checkLeads() {
     const mobileNo = document.getElementById("externalclientnumber").value.trim();
@@ -38,9 +24,9 @@ async function checkLeads() {
         hideLoader();
 
         if (!result || result.status === "no_lead_found") {
-            showModal();
+            showModal("No Lead Found", `<button class="btn btn-active w-32" onclick="createLead()">Create Lead</button>`);
         } else {
-            showModal();
+            showModal("Lead Found", `<p class="text-lg font-semibold">Lead ID: ${result.lead_id}</p>`);
         }
     } catch (error) {
         console.error("API Error:", error);
@@ -51,13 +37,15 @@ async function checkLeads() {
     }
 }
 
-// Show the modal
-function showModal() {
+// Function to show the modal with dynamic content
+function showModal(title, content) {
     const modal = document.getElementById("my_modal_checkLeads");
+    document.getElementById("dialogTitle").innerText = title;
+    document.getElementById("dialogContent").innerHTML = content;
     if (modal) modal.showModal();
 }
 
-// Close the modal
+// Function to close the modal
 function closeModal() {
     const modal = document.getElementById("my_modal_checkLeads");
     if (modal) modal.close();
@@ -67,4 +55,13 @@ function closeModal() {
 function createLead() {
     alert("Create Lead functionality to be implemented.");
     closeModal();
+}
+
+// Loader control functions
+function showLoader() {
+    document.getElementById("loader").classList.remove("hidden");
+}
+
+function hideLoader() {
+    document.getElementById("loader").classList.add("hidden");
 }
