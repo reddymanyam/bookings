@@ -19,7 +19,7 @@ async function checkLeads() {
             args: { mobile_no: mobileNo, email: email },
         });
  
-        // create_new_lead
+        //........................................... create_new_lead ...............................//
 
         const result = response.message;
         console.log("result:", result);
@@ -68,6 +68,12 @@ function closeModal() {
 
     const secondGroup = document.getElementById("secondgroup");
     if (secondGroup) secondGroup.style.display = "grid";
+
+    const submitButton = document.getElementById("submitButton");
+    if (submitButton) submitButton.style.display = "block";
+
+    const checkoutButton = document.getElementById("checkOutButton");
+    if (checkoutButton) checkoutButton.style.display = "none";
 }
 
 // Placeholder function for lead creation
