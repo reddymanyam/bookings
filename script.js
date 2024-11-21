@@ -1,4 +1,6 @@
-// Updated function to handle API call and modal display
+// Declare global variable for lead_id
+let lead_id = null;
+
 async function checkLeads() {
     const mobileNo = document.getElementById("externalclientnumber").value.trim();
     const email = document.getElementById("externalclientemail").value.trim();
@@ -16,17 +18,30 @@ async function checkLeads() {
             method: "novelite.api.bookings_api.external_client_booking.check_in_leads",
             args: { mobile_no: mobileNo, email: email },
         });
+ 
+        // create_new_lead
 
         const result = response.message;
-        console.log("API Response:", result);
+        console.log("result:", result);
 
         // Hide loader after receiving the response
         hideLoader();
 
-        if (!result || result.status === "no_lead_found") {
+        if ( result.includes("No leads found")) {
             showModal("No Lead Found", `<button class="btn btn-active w-32" onclick="createLead()">Create Lead</button>`);
         } else {
-            showModal("Lead Found", `<p class="text-lg font-semibold">Lead ID: ${result.lead_id}</p>`);
+            // Assign lead ID to global variable
+            lead_id = result[0].name;
+            showModal("Lead Found", `<p class="text-lg font-semibold">Lead ID: ${lead_id}</p>`);
+
+            // Add lead ID to the select element
+            const leadIdOption = document.getElementById("lead_id");
+            if (leadIdOption) {
+                const newOption = document.createElement("option");
+                newOption.value = lead_id;
+                newOption.text = lead_id;
+                leadIdOption.appendChild(newOption);
+            }
         }
     } catch (error) {
         console.error("API Error:", error);
@@ -49,11 +64,20 @@ function showModal(title, content) {
 function closeModal() {
     const modal = document.getElementById("my_modal_checkLeads");
     if (modal) modal.close();
+    console.log("clicked");
+
+    const secondGroup = document.getElementById("secondgroup");
+    if (secondGroup) secondGroup.style.display = "grid";
 }
 
 // Placeholder function for lead creation
 function createLead() {
-    alert("Create Lead functionality to be implemented.");
+    if (lead_id) {
+        alert(`Creating lead with ID: ${lead_id}`);
+        // Add further logic for creating lead if needed
+    } else {
+        alert("No lead ID available to create.");
+    }
     closeModal();
 }
 
