@@ -130,12 +130,13 @@
     <dialog id="my_modal_checkLeads" class="modal">
         <div class="modal-box">
             <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeModal()">✕</button>
-            <h3 class="font-bold text-lg mb-4">No Lead Found</h3>
-            <div class="flex justify-center gap-4">
-                <button class="btn btn-active w-32" onclick="createLead()">Create Lead</button>
+            <h3 id="dialogTitle" class="font-bold text-lg mb-4"></h3>
+            <div id="dialogContent" class="flex justify-center gap-4">
+                <!-- Content will be updated based on API response -->
             </div>
         </div>
     </dialog>
+
 
     <!-- Loader -->
     <div id="loader" class="hidden fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
