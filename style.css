@@ -406,3 +406,9 @@
         display:none;
     }
     
+    .spinner-border {
+        border-top-color: transparent;
+        border-right-color: transparent;
+        border-left-color: #7c3aed;
+        border-bottom-color: #7c3aed;
+    }
