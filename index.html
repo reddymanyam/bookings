@@ -88,8 +88,7 @@
                         <!-- Booking Date -->
                         <div>
                             <label for="booking_date">Booking Date</label>
-                            <input type="date" id="booking_date" name="booking_date" value=""
-                                />
+                            <input type="date" id="booking_date" name="booking_date" value="" />
                         </div>
 
                         <!-- Money Collected -->
@@ -116,12 +115,12 @@
                             <p id="price_per_hour" class="font-bold text-lg">0</p>
                         </div>
 
-                      
+
                     </div>
-                      <!-- Check Out Button -->
-                        <div class="flex items-center justify-center">
-                            <button type="button" class="btn btn-active w-28" onclick="checkLeads()">Check Out</button>
-                        </div>
+                    <!-- Check Out Button -->
+                    <div class="flex items-center justify-center">
+                        <button type="button" class="btn btn-active w-28" onclick="checkLeads()">Check Out</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -138,11 +137,16 @@
         </div>
     </dialog>
 
+    <!-- Loader -->
+    <div id="loader" class="hidden fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
+        <div class="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full text-purple-800"></div>
+    </div>
+
     <!-- Footer -->
     <footer class="p-4 text-center text-sm">
         &copy; Copyright 2024 Novel Office.
     </footer>
-
+    <script src="script.js"></script>
 </body>
 
 </html>
