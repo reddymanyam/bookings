@@ -406,6 +406,13 @@
         display:none;
     }
     
+    #checkOutButton{
+        display: block;
+    }
+    
+    #submitButton{
+        display: none;
+    }
     .spinner-border {
         border-top-color: transparent;
         border-right-color: transparent;
