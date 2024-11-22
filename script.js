@@ -1,6 +1,7 @@
 // Declare global variable for lead_id
 let lead_id = null;
 
+// Function to check for leads based on mobile number and email
 async function checkLeads() {
     const mobileNo = document.getElementById("externalclientnumber").value.trim();
     const email = document.getElementById("externalclientemail").value.trim();
@@ -53,7 +54,7 @@ function showModal(title, content) {
     if (modal) modal.showModal();
 }
 
-// Function to close the modal
+// Function to close the modal and show/hide other UI elements
 function closeModal() {
     const modal = document.getElementById("my_modal_checkLeads");
     if (modal) modal.close();
@@ -68,7 +69,7 @@ function closeModal() {
     if (checkoutButton) checkoutButton.style.display = "none";
 }
 
-// Function to create a new lead
+// Function to create a new lead if none exists
 async function createLead() {
     const mobileNo = document.getElementById("externalclientnumber").value.trim();
     const email = document.getElementById("externalclientemail").value.trim();
@@ -125,6 +126,100 @@ function updateLeadIdDropdown(newLeadId) {
         leadIdSelect.appendChild(newOption);
     }
 }
+
+// Fetch form data for customer, location, room type, etc.
+function fetchFormData(doctype, field, filters = []) {
+
+    frappe.call({
+        method: "frappe.client.get_list",
+        args: {
+            doctype: doctype,
+            fields: [field],
+            filters: filters,
+        },
+        callback: function (response) {
+            if (doctype === 'Property Location' || doctype === 'Room Type') {
+                const selectElement = document.getElementById(doctype === 'Property Location' ? 'location' : 'room_type');
+                selectElement.innerHTML = ''; // Clear previous options
+                response.message.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item[field];
+                    option.textContent = item[field];
+                    selectElement.appendChild(option);
+                });
+            } else {
+                // This handles the 'Rooms' case
+                const roomSelectElement = document.getElementById('room');
+                roomSelectElement.innerHTML = ''; // Clear previous room options
+
+                if (response.message.length === 0) {
+                    roomSelectElement.innerHTML = '<option value="">No rooms found</option>';
+                } else {
+                    response.message.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item[field];
+                        option.textContent = item[field];
+                        roomSelectElement.appendChild(option);
+                    });
+                }
+            }
+        }
+    });
+}
+
+// Function to fetch the price based on location and room type
+function fetchPrice(location, roomType) {
+
+    frappe.call({
+        method: "frappe.client.get",
+        args: {
+            doctype: 'Room Locations',
+            filters: [
+                ['name', '=', location],
+            ]
+        },
+        callback: function (response) {
+            const priceObj = response.message.room_type_details.find((room) => {
+                return room.room_type === roomType ? room.price_per_hour : null;
+            });
+            const roomPrice = priceObj ? priceObj.price_per_hour : 0;
+            document.getElementById('price_per_hour').innerHTML = roomPrice;
+        }
+    });
+}
+
+// Fetch static data on page load
+document.addEventListener('DOMContentLoaded', () => {
+    fetchFormData('Property Location', 'name'); // No suggestions needed
+    fetchFormData('Room Type', 'name'); // No suggestions needed
+});
+
+// Event listener for location and room type changes to fetch rooms based on filters
+document.getElementById('location').addEventListener('change', function () {
+    const selectedLocation = this.value;
+    const selectedRoomType = document.getElementById('room_type').value;
+    fetchRooms(selectedLocation, selectedRoomType);
+});
+
+document.getElementById('room_type').addEventListener('change', function () {
+    const selectedLocation = document.getElementById('location').value;
+    const selectedRoomType = this.value;
+    fetchRooms(selectedLocation, selectedRoomType);
+    fetchPrice(selectedLocation, selectedRoomType);
+});
+
+// Function to fetch rooms based on selected location and room type
+function fetchRooms(location, roomType) {
+
+    const filters = [
+        ['location', '=', location],
+        ['room_type', '=', roomType]
+    ];
+
+    fetchFormData('Rooms', 'room_name', null, filters); // No suggestions needed for rooms
+}
+
+
 
 // Loader control functions
 function showLoader() {
