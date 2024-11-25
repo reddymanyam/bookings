@@ -114,19 +114,37 @@
                             <label for="rate">Price per hour (in ₹)</label>
                             <p id="price_per_hour" class="font-bold text-lg">0</p>
                         </div>
-
+                        
+                          <!--Total Amount -->
+                        <div>
+                            <label for="rate">Total Amount (in ₹)</label>
+                            <p id="total_amount" class="font-bold text-lg">0</p>
+                        </div>
+                        
+                        
+                    <!-- Submit Button -->
+                     <div class="flex items-center justify-center">
+                        <button type="button" id="submitButton" class="btn btn-active w-72" onclick="SubmitLeads()">Submit</button>
+                     </div>
                     </div>
                     <!-- Check Out Button -->
                     <div class="flex items-center justify-center">
                         <button type="button" id="checkOutButton" class="btn btn-active w-28" onclick="checkLeads()">Check Out</button>
                     </div>
 
-                    <!-- Submit Button -->
-                     <div class="flex items-center justify-center">
-                        <button type="button" id="submitButton" class="btn btn-active w-28" onclick="SubmitLeads()">Submit</button>
-                     </div>
                 </div>
+               
             </form>
+             <div class="flex-col justify-between items-center ml-8">
+                        <!-- Slots Container -->
+                        <div id="newSlotsContainer">
+
+                        </div>
+                        <!-- Clear Selection button -->
+                        <div class="flex justify-center items-center cursor-pointer bg-red-500 font-bold mt-8 hover:bg-red-700 text-white hover:border-1 hover:border-grey py-2 rounded-md"
+                            id="clearButton">
+                            Clear Selection
+                        </div>
         </div>
     </div>
 
