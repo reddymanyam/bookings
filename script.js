@@ -1,5 +1,6 @@
 // Declare global variable for lead_id
 let lead_id = null;
+const clearButton = document.getElementById('clearButton');
 
 // Function to check for leads based on mobile number and email
 async function checkLeads() {
@@ -217,38 +218,210 @@ function fetchRooms(location, roomType) {
     fetchFormData('Rooms', 'room_name', filters); // Pass filters dynamically
 }
 
-// Set booking date to the current date
-let currentDate = new Date().toJSON().slice(0, 10);
-document.getElementById("booking_date_filter").value = currentDate;
 
-// Event listener for location, date, room type, room changes
-function updateDetails() {
-    const location = document.getElementById('location_filter').value || localStorage.getItem('selectedLocation');
-    let bookingDate = document.getElementById('booking_date_filter').value;
+clearButton.style.visibility = 'hidden'
 
-    // Default to today's date if bookingDate is empty or null
-    if (!bookingDate) {
-        const today = new Date();
-        bookingDate = today.toISOString().split('T')[0]; // Format as yyyy-mm-dd
-    }
+// Fetch booked slots based on the selected filters
+async function fetchBookedSlots(location, roomType, room, dates) {
 
-    const roomType = document.getElementById('room_type_filter').value;
-    const room = document.getElementById('room_filter').value;
+    return new Promise((resolve, reject) => {
+        frappe.call({
+            method: "frappe.client.get_list",
+            args: {
+                doctype: "Room Booking slot",
+                fields: ['booking_time'],
+                filters: [
+                    ['location', '=', location],
+                    ['room_type', '=', roomType],
+                    ['room', '=', location + ' - ' + room],
+                    ['booking_date', '=', dates],
+                    ['status', '=', 'Approved']
+                ]
+            },
+            callback: function (response) {
+                if (response.message) {
+                    // Parse each booked slot's time from string into an array and flatten it
+                    const bookedSlots = response.message
+                        .map(slot => JSON.parse(slot.booking_time)) // Parse the string
+                        .flat(); // Flatten the arrays into a single array of time strings
 
-    fetchData(currentPagePending, false, location, roomType, room, bookingDate);
-    fetchTotalPages(location, roomType, room, bookingDate);
+                    // Remove duplicates using Set
+                    const uniqueBookedSlots = [...new Set(bookedSlots)];
+                    resolve(uniqueBookedSlots);
+                } else {
+                    resolve([]); // No booked slots found
+                }
+            },
+            error: function (err) {
+                console.error("Error fetching booked slots:", err);
+                reject(err);
+            }
+        });
+    });
 }
 
-// Event listener for all filters
-document.getElementById('location_filter').addEventListener('change', updateDetails);
-document.getElementById('booking_date_filter').addEventListener('change', updateDetails);
-document.getElementById('room_filter').addEventListener('change', updateDetails);
-document.getElementById('room_type_filter').addEventListener('change', function () {
-    const selectedLocation = document.getElementById('location_filter').value;
-    const selectedRoomType = this.value;
-    fetchRoomsHome(selectedLocation, selectedRoomType);
-    updateDetails();
+// Generate new time slots and disable booked ones
+async function generateNewTimeSlots(date) {
+    const location = document.getElementById('location').value;
+    const roomType = document.getElementById('room_type').value;
+    const room = document.getElementById('room').value;
+    const selectedDate = document.getElementById('booking_date').value;
+
+    // Clear existing slots
+    newSlotsContainer.innerHTML = '';
+
+    // Fetch booked slots for the selected date
+    const bookedSlots = await fetchBookedSlots(location, roomType, room, selectedDate);
+
+    const currentDate = new Date();
+    const currentTime = currentDate.getTime();
+    const startOfDay = new Date(`${date}T00:00:00`);
+    const endOfDay = new Date(`${date}T23:30:00`);
+
+    let start = (new Date(date).toDateString() === currentDate.toDateString()) ?
+        new Date(currentTime) : startOfDay;
+
+    // Adjust start time for the current day to the next available slot
+    if (start.getMinutes() >= 30) {
+        start.setMinutes(0);
+        start.setHours(start.getHours() + 1);
+    } else if (start.getMinutes() > 0) {
+        start.setMinutes(30);
+    } else {
+        start.setMinutes(0); // Start at the top of the hour
+    }
+
+    // Exit early if the selected time is beyond the available slots
+    if (start > endOfDay) return;
+
+    // First selected slot for range selection
+    let firstSelectedSlot = null;
+
+    // Calculate total price based on selected slots
+    function calculateTotalPrice() {
+        return (roomPrice / 2) * getSelectedSlots().length;
+    }
+
+    // Retrieve selected slots from DOM
+    function getSelectedSlots() {
+        return Array.from(newSlotsContainer.getElementsByClassName('selected'));
+    }
+
+    // Iterate over possible slots for the selected day
+    while (start <= endOfDay) {
+        const hours = String(start.getHours()).padStart(2, '0');
+        const minutes = String(start.getMinutes()).padStart(2, '0');
+        const timeSlot = `${hours}:${minutes}`;
+
+        let slotElement = document.createElement('div');
+        slotElement.classList.add('time-slot');
+        slotElement.textContent = timeSlot;
+
+        // Mark as disabled if already booked
+        if (bookedSlots.includes(timeSlot)) {
+            slotElement.classList.add('disabled');
+            slotElement.style.backgroundColor = '#999999b8';
+            slotElement.style.color = 'white';
+            slotElement.style.cursor = 'not-allowed';
+        } else {
+            // Handle click event for available slots
+            slotElement.addEventListener('click', () => {
+                if (!firstSelectedSlot) {
+                    // First slot selection
+                    firstSelectedSlot = slotElement;
+                    slotElement.classList.add('selected');
+                    slotElement.style.backgroundColor = '#4caf50';
+                } else {
+                    // Second slot selection: if it's earlier than the first selected slot, swap them
+                    let startTime = new Date(`1970-01-01T${firstSelectedSlot.textContent}:00`);
+                    let endTime = new Date(`1970-01-01T${timeSlot}:00`);
+
+                    if (endTime < startTime) {
+                        // Swap the slots
+                        [firstSelectedSlot, slotElement] = [slotElement, firstSelectedSlot];
+                        [startTime, endTime] = [endTime, startTime]; // Adjust times accordingly
+                    }
+
+                    // Check if any booked slots are in between
+                    let currentSlot = firstSelectedSlot;
+                    let bookedInBetween = false;
+                    while (currentSlot !== slotElement) {
+                        if (bookedSlots.includes(currentSlot.textContent)) {
+                            bookedInBetween = true;
+                            break;
+                        }
+                        currentSlot = currentSlot.nextElementSibling;
+                    }
+
+                    // If a booked slot is found in between, show an alert
+                    if (bookedInBetween) {
+                        alert('Some slots are already booked in between. Please select a different range.');
+                        return; // Exit the function if an alert is shown
+                    }
+
+                    // Select slots between first and current slot
+                    currentSlot = firstSelectedSlot;
+                    while (currentSlot !== slotElement) {
+                        currentSlot.classList.add('selected');
+                        currentSlot.style.backgroundColor = '#4caf50';
+                        currentSlot = currentSlot.nextElementSibling;
+                    }
+                    slotElement.classList.add('selected');
+                    slotElement.style.backgroundColor = '#4caf50';
+                }
+
+                // Conditionally show or hide the clear button
+                const selectedSlots = getSelectedSlots();
+                clearButton.style.visibility = selectedSlots.length > 0 ? 'visible' : 'hidden';
+            });
+        }
+
+        // Append the time slot to the container
+        newSlotsContainer.appendChild(slotElement);
+
+        // Increment time by 30 minutes for the next slot
+        start.setMinutes(start.getMinutes() + 30);
+    }
+
+    // Clear button functionality
+    clearButton.addEventListener('click', () => {
+        const selectedSlots = getSelectedSlots();
+        selectedSlots.forEach(slot => {
+            slot.classList.remove('selected');
+            slot.style.backgroundColor = ''; // Remove background color
+        });
+
+        firstSelectedSlot = null; // Reset first selected slot
+        clearButton.style.visibility = 'hidden';
+    });
+}
+
+// Call generateNewTimeSlots on date change
+const bookingDateInput = document.getElementById('booking_date');
+const newSlotsContainer = document.getElementById('newSlotsContainer');
+
+bookingDateInput.addEventListener('change', function () {
+    const selectedDate = new Date(this.value); // selected date from input
+    const currentDate = new Date(); // current date and time
+
+    // Set the time of selectedDate to the current time
+    selectedDate.setHours(currentDate.getHours());
+    selectedDate.setMinutes(currentDate.getMinutes());
+    selectedDate.setSeconds(currentDate.getSeconds());
+    selectedDate.setMilliseconds(currentDate.getMilliseconds());
+
+    if (selectedDate < currentDate) {
+        // Reset date to current date
+        const currentDateString = currentDate.toISOString().split('T')[0]; // Format date as YYYY-MM-DD
+        bookingDateInput.value = currentDateString;
+        generateNewTimeSlots(currentDateString);
+        alert("Can't select previous date");
+    } else {
+        // Generate new time slots for the selected date
+        generateNewTimeSlots(this.value);
+    }
 });
+
 
 
 // Loader control functions
