@@ -2,7 +2,6 @@
 let lead_id = null;
 let total_booking_price = 0;
 let roomPrice = 0;
-let selectedTimes = []; // Store selected times
 
 const clearButton = document.getElementById('clearButton');
 
@@ -80,18 +79,20 @@ function closeModal() {
 async function createLead() {
     const mobileNo = document.getElementById("externalclientnumber").value.trim();
     const email = document.getElementById("externalclientemail").value.trim();
+    const name = document.getElementById("externalclientname").value.trim();
+    const companyName = document.getElementById("company").value.trim();
 
-    if (!mobileNo || !email) {
-        alert("Mobile number and email are required to create a lead.");
+    if (!mobileNo || !email || !name || !companyName) {
+        alert("Mobile number and email and name and companyName are required to create a lead.");
         return;
     }
 
     showLoader();
-
+    console.log(name, companyName)
     try {
         const response = await frappe.call({
             method: "novelite.api.bookings_api.external_client_booking.create_new_lead",
-            args: { mobile_no: mobileNo, email: email },
+            args: { "mobile_no": mobileNo, "email": email, "name": name, "comapny_name": companyName },
         });
 
         const result = response.message;
