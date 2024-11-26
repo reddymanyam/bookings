@@ -391,14 +391,14 @@ const external_client_booking_data = {
     email:"",
     company:"",
     leadid:"",
-    locations:"",
+    location:"",
     roomtype:"",
     room:"",
     bookingdate:"",
     moneycollected:"",
     cardstatus:"",
-    totalamount:""
-    
+    totalamount:"",
+    bookedslots:[]
 }
 
 submitButton.addEventListener("click", function(event){
@@ -407,14 +407,15 @@ submitButton.addEventListener("click", function(event){
     external_client_booking_data.number = document.getElementById("externalclientnumber").value.trim();
     external_client_booking_data.email = document.getElementById("externalclientemail").value.trim();
     external_client_booking_data.company = document.getElementById("company").value.trim();
-    external_client_booking_data.leadid = document.getElementById("lead_id").value.trim();
-    external_client_booking_data.locations = document.getElementById("location").value.trim();
-    external_client_booking_data.roomtype = document.getElementById("room_type").value.trim();
-    external_client_booking_data.room = document.getElementById("room").value.trim();
-    external_client_booking_data.bookingdate = document.getElementById("booking_date").value.trim();
-    external_client_booking_data.moneycollected = document.getElementById("money_collected_dropdown").value.trim();
-    external_client_booking_data.cardstatus = document.getElementById("card_status_dropdown").value.trim();
-    external_client_booking_data.totalamount = document.getElementById("total_amount").value.trim();
+    external_client_booking_data.leadid = document.getElementById("lead_id").value;
+    external_client_booking_data.location = document.getElementById("location").value;
+    external_client_booking_data.roomtype = document.getElementById("room_type").value;
+    external_client_booking_data.room = document.getElementById("room").value;
+    external_client_booking_data.bookingdate = document.getElementById("booking_date").value;
+    external_client_booking_data.moneycollected = document.getElementById("money_collected_dropdown").value;
+    external_client_booking_data.cardstatus = document.getElementById("card_status_dropdown").value;
+    external_client_booking_data.totalamount = document.getElementById("total_amount").innerHTML;
+    external_client_booking_data.bookedslots = getSelectedSlots().map(slot => slot.textContent);
     
     console.log(external_client_booking_data)
 })
