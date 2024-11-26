@@ -3,6 +3,7 @@ let lead_id = null;
 let total_booking_price = 0;
 let roomPrice = 0;
 
+const submitButton = document.getElementById('submitButton');
 const clearButton = document.getElementById('clearButton');
 
 // Function to check for leads based on mobile number and email
@@ -383,6 +384,40 @@ bookingDateInput.addEventListener('change', function () {
         generateNewTimeSlots(this.value);
     }
 });
+
+const external_client_booking_data = {
+    name:"",
+    number:"",
+    email:"",
+    company:"",
+    leadid:"",
+    locations:"",
+    roomtype:"",
+    room:"",
+    bookingdate:"",
+    moneycollected:"",
+    cardstatus:"",
+    totalamount:""
+    
+}
+
+submitButton.addEventListener("click", function(event){
+    event.preventDefault();
+    external_client_booking_data.name = document.getElementById("externalclientname").value.trim();
+    external_client_booking_data.number = document.getElementById("externalclientnumber").value.trim();
+    external_client_booking_data.email = document.getElementById("externalclientemail").value.trim();
+    external_client_booking_data.company = document.getElementById("company").value.trim();
+    external_client_booking_data.leadid = document.getElementById("lead_id").value.trim();
+    external_client_booking_data.locations = document.getElementById("location").value.trim();
+    external_client_booking_data.roomtype = document.getElementById("room_type").value.trim();
+    external_client_booking_data.room = document.getElementById("room").value.trim();
+    external_client_booking_data.bookingdate = document.getElementById("booking_date").value.trim();
+    external_client_booking_data.moneycollected = document.getElementById("money_collected_dropdown").value.trim();
+    external_client_booking_data.cardstatus = document.getElementById("card_status_dropdown").value.trim();
+    external_client_booking_data.totalamount = document.getElementById("total_amount").value.trim();
+    
+    console.log(external_client_booking_data)
+})
 
 function showLoader() {
     document.getElementById("loader").classList.remove("hidden");
