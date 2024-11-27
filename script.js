@@ -385,6 +385,7 @@ bookingDateInput.addEventListener('change', function () {
     }
 });
 
+
 const external_client_booking_data = {
     name:"",
     number:"",
@@ -414,10 +415,32 @@ submitButton.addEventListener("click", function(event){
     external_client_booking_data.bookingdate = document.getElementById("booking_date").value;
     external_client_booking_data.moneycollected = document.getElementById("money_collected_dropdown").value;
     external_client_booking_data.cardstatus = document.getElementById("card_status_dropdown").value;
-    external_client_booking_data.totalamount = document.getElementById("total_amount").innerHTML;
-    external_client_booking_data.bookedslots = getSelectedSlots().map(slot => slot.textContent);
+    external_client_booking_data.totalamount = document.getElementById("total_amount").innerHTML.trim();
+    external_client_booking_data.bookedslots = getSelectedSlots().map(slot => slot.textContent).trim();
     
     console.log(external_client_booking_data)
+   
+   if (
+        !external_client_booking_data.name || 
+        !external_client_booking_data.number || 
+        !external_client_booking_data.email || 
+        !external_client_booking_data.company || 
+        !external_client_booking_data.leadid || 
+        !external_client_booking_data.location || 
+        !external_client_booking_data.roomtype || 
+        !external_client_booking_data.room || 
+        !external_client_booking_data.bookingdate || 
+        !external_client_booking_data.moneycollected || 
+        !external_client_booking_data.cardstatus || 
+        !external_client_booking_data.totalamount || 
+        external_client_booking_data.bookedslots.length === 0 
+    ) {
+        alert("Please fill the details correctly!");
+        return; 
+    }
+
+    
+    alert("Form submitted successfully!");
 })
 
 function showLoader() {
