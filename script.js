@@ -416,10 +416,9 @@ submitButton.addEventListener("click", function(event){
     external_client_booking_data.moneycollected = document.getElementById("money_collected_dropdown").value;
     external_client_booking_data.cardstatus = document.getElementById("card_status_dropdown").value;
     external_client_booking_data.totalamount = document.getElementById("total_amount").innerHTML.trim();
-    external_client_booking_data.bookedslots = getSelectedSlots().map(slot => slot.textContent).trim();
+    external_client_booking_data.bookedslots = getSelectedSlots().map(slot => slot.textContent);
     
-    console.log(external_client_booking_data)
-   
+    
    if (
         !external_client_booking_data.name || 
         !external_client_booking_data.number || 
@@ -437,6 +436,8 @@ submitButton.addEventListener("click", function(event){
     ) {
         alert("Please fill the details correctly!");
         return; 
+         console.log(external_client_booking_data)
+   
     }
 
     
