@@ -409,7 +409,8 @@ submitButton.addEventListener("click", function (event) {
     external_client_booking_data.email = document.getElementById("externalclientemail").value.trim();
     external_client_booking_data.company = document.getElementById("company").value.trim();
     external_client_booking_data.leadid = document.getElementById("lead_id").value;
-    external_client_booking_data.location = document.getElementById("location").value;
+    external_client_booking_data.location = document.getElementById("location").value; 
+    
     external_client_booking_data.roomtype = document.getElementById("room_type").value;
     external_client_booking_data.room = document.getElementById("room").value;
     external_client_booking_data.bookingdate = document.getElementById("booking_date").value;
