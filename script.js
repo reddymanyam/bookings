@@ -2,6 +2,7 @@
 let lead_id = null;
 let total_booking_price = 0;
 let roomPrice = 0;
+let money_collected_date = "";
 
 const submitButton = document.getElementById('submitButton');
 const clearButton = document.getElementById('clearButton');
@@ -25,8 +26,6 @@ async function checkLeads() {
         });
 
         const result = response.message;
-        console.log("result:", result);
-
         hideLoader();
 
         if (result.includes("No leads found")) {
@@ -89,7 +88,6 @@ async function createLead() {
     }
 
     showLoader();
-    console.log(name, companyName)
     try {
         const response = await frappe.call({
             method: "novelite.api.bookings_api.external_client_booking.create_new_lead",
@@ -97,8 +95,6 @@ async function createLead() {
         });
 
         const result = response.message;
-        console.log("Created lead:", result);
-
         if (result) {
             lead_id = result.name;
             updateLeadIdDropdown(lead_id);
@@ -207,7 +203,7 @@ function fetchRooms(location, roomType) {
     if (roomType) {
         filters.push(['room_type', '=', roomType]);
     }
-    fetchFormData('Rooms', 'room_name', filters);
+    fetchFormData('Rooms', 'name', filters);
 }
 
 clearButton.style.visibility = 'hidden';
@@ -222,7 +218,7 @@ async function fetchBookedSlots(location, roomType, room, dates) {
                 filters: [
                     ['location', '=', location],
                     ['room_type', '=', roomType],
-                    ['room', '=', location + ' - ' + room],
+                    ['room', '=', room],
                     ['booking_date', '=', dates],
                     ['status', '=', 'Approved']
                 ]
@@ -247,7 +243,9 @@ async function fetchBookedSlots(location, roomType, room, dates) {
 }
 
 function getSelectedSlots() {
-    return Array.from(newSlotsContainer.getElementsByClassName('selected'));
+    // let selected = document.querySelectorAll(".selected");
+    const selectedSlots = document.querySelectorAll('.selected');
+    return Array.from(selectedSlots).map(slot => slot.textContent);
 }
 
 async function generateNewTimeSlots(date) {
@@ -385,69 +383,125 @@ bookingDateInput.addEventListener('change', function () {
     }
 });
 
-
 const external_client_booking_data = {
-    name: "",
-    number: "",
-    email: "",
-    company: "",
-    leadid: "",
+    client_name: "",
+    phone_number: "",
+    customer_email: "",
+    customer_name: "",
+    lead_id: "",
     location: "",
-    roomtype: "",
+    room_type: "",
     room: "",
-    bookingdate: "",
-    moneycollected: "",
-    cardstatus: "",
-    totalamount: "",
-    bookedslots: []
+    booking_date: "",
+    money_collected: "",
+    money_collected_date: "",
+    card_status: "",
+    price: "",
+    booking_time: [],
+    total_hours: 0
 }
 
 submitButton.addEventListener("click", function (event) {
-    event.preventDefault();
-    external_client_booking_data.name = document.getElementById("externalclientname").value.trim();
-    external_client_booking_data.number = document.getElementById("externalclientnumber").value.trim();
-    external_client_booking_data.email = document.getElementById("externalclientemail").value.trim();
-    external_client_booking_data.company = document.getElementById("company").value.trim();
-    external_client_booking_data.leadid = document.getElementById("lead_id").value;
-    external_client_booking_data.location = document.getElementById("location").value; 
-    
-    external_client_booking_data.roomtype = document.getElementById("room_type").value;
+    // event.preventDefault();
+
+    submitButton.disabled = true;
+
+    external_client_booking_data.client_name = document.getElementById("externalclientname").value.trim();
+    external_client_booking_data.phone_number = document.getElementById("externalclientnumber").value.trim();
+    external_client_booking_data.customer_email = document.getElementById("externalclientemail").value.trim();
+    external_client_booking_data.customer_name = document.getElementById("company").value.trim();
+    external_client_booking_data.lead_id = document.getElementById("lead_id").value;
+    external_client_booking_data.location = document.getElementById("location").value;
+    external_client_booking_data.room_type = document.getElementById("room_type").value;
     external_client_booking_data.room = document.getElementById("room").value;
-    external_client_booking_data.bookingdate = document.getElementById("booking_date").value;
-    external_client_booking_data.moneycollected = document.getElementById("money_collected_dropdown").value;
-    external_client_booking_data.cardstatus = document.getElementById("card_status_dropdown").value;
-    external_client_booking_data.totalamount = document.getElementById("total_amount").innerHTML.trim();
-    external_client_booking_data.bookedslots = getSelectedSlots().map(slot => slot.textContent);
+    external_client_booking_data.booking_date = document.getElementById("booking_date").value;
+    external_client_booking_data.money_collected = document.getElementById("money_collected_dropdown").value;
+    external_client_booking_data.card_status = document.getElementById("card_status_dropdown").value;
+    external_client_booking_data.price = document.getElementById("total_amount").innerHTML.trim();
+    external_client_booking_data.booking_time = getSelectedSlots();
+    external_client_booking_data.total_hours = getSelectedSlots().length / 2;
 
+   if (external_client_booking_data.money_collected === "yes") {
+        const currentDate = new Date();
+        const formattedDate = `${String(currentDate.getDate()).padStart(2, '0')}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${currentDate.getFullYear()}`;
+        external_client_booking_data.money_collected_date = formattedDate;
+       
+    }
 
+     console.log("Money Collected Date:", external_client_booking_data.money_collected_date);
+     
     // Validating the form
     const missingFields = [];
-    if (!external_client_booking_data.name) missingFields.push("Name");
-    if (!external_client_booking_data.number) missingFields.push("Phone Number");
-    if (!external_client_booking_data.email) missingFields.push("Email");
-    if (!external_client_booking_data.company) missingFields.push("Company");
-    if (!external_client_booking_data.leadid) missingFields.push("Lead ID");
+    if (!external_client_booking_data.client_name) missingFields.push("Name");
+    if (!external_client_booking_data.phone_number) missingFields.push("Phone Number");
+    if (!external_client_booking_data.customer_email) missingFields.push("Email");
+    if (!external_client_booking_data.customer_name) missingFields.push("Company");
+    if (!external_client_booking_data.lead_id) missingFields.push("Lead ID");
     if (!external_client_booking_data.location) missingFields.push("Location");
-    if (!external_client_booking_data.roomtype) missingFields.push("Room Type");
+    if (!external_client_booking_data.room_type) missingFields.push("Room Type");
     if (!external_client_booking_data.room) missingFields.push("Room");
-    if (!external_client_booking_data.bookingdate) missingFields.push("Booking Date");
-    if (!external_client_booking_data.moneycollected) missingFields.push("Money Collected");
-    if (!external_client_booking_data.cardstatus) missingFields.push("Card Status");
-    if (!external_client_booking_data.totalamount) missingFields.push("Total Amount");
-    if (external_client_booking_data.bookedslots.length === 0) missingFields.push("Booked Slots");
-
-    console.log("missgFields.....", missingFields)
+    if (!external_client_booking_data.booking_date) missingFields.push("Booking Date");
+    if (!external_client_booking_data.money_collected) missingFields.push("Money Collected");
+    if (!external_client_booking_data.card_status) missingFields.push("Card Status");
+    if (!external_client_booking_data.price) missingFields.push("Total Amount");
+    if (external_client_booking_data.booking_time.length === 0) missingFields.push("Booked Slots");
 
     // Show alert if fields are missing
     if (missingFields.length > 0) {
         alert(`Please fill in the following fields correctly:\n- ${missingFields.join("\n- ")}`);
         return;
+    } else {
+
+        let bookingData = {
+            doctype: "Room Booking slot",
+            customer_type: "External Client",
+            client_name: external_client_booking_data.client_name,
+            phone_number: external_client_booking_data.phone_number,
+            customer_email: external_client_booking_data.customer_email,
+            customer_name: external_client_booking_data.customer_name,
+            lead_id: external_client_booking_data.lead_id,
+            location: external_client_booking_data.location,
+            room_type: external_client_booking_data.room_type,
+            room: external_client_booking_data.room,
+            booking_date: external_client_booking_data.booking_date,
+            money_collected: external_client_booking_data.money_collected,
+            money_collected_date: external_client_booking_data.money_collected_date,
+            card_status: external_client_booking_data.card_status,
+            price: external_client_booking_data.price,
+            total_hours: external_client_booking_data.total_hours,
+            block_temp: 0,
+            booking_time: JSON.stringify(external_client_booking_data.booking_time)
+        }
+
+        // bookingData = JSON.stringify(bookingData);
+        
+        console.log("bookingData = ", bookingData);
+        console.log("Money Collected Date:", external_client_booking_data.money_collected_date);
+
+        frappe.call({
+            method: "frappe.client.insert",
+            args: {
+                doc: bookingData
+            },
+            callback: function (response) {
+                if (response && response.message) {
+                    alert("Booking created successfully!");
+                    setTimeout(() => {
+                        submitButton.disabled = false;
+                        // location.reload(); // Reload the page after a delay
+                    }, 2000);
+                } else {
+                    alert("Error creating booking!");
+                    submitButton.disabled = false;
+                }
+            },
+            error: function (err) {
+                console.error("Error creating booking:", err);
+                alert("Error creating booking!");
+                submitButton.disabled = false;
+            }
+        });
     }
-
-    // If validation passes
-    alert("Form submitted successfully!");
-    console.log(external_client_booking_data);
-
 })
 
 function showLoader() {
