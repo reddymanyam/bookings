@@ -2,10 +2,10 @@
 let lead_id = null;
 let total_booking_price = 0;
 let roomPrice = 0;
-let money_collected_date = "";
 
 const submitButton = document.getElementById('submitButton');
 const clearButton = document.getElementById('clearButton');
+
 
 // Function to check for leads based on mobile number and email
 async function checkLeads() {
@@ -402,10 +402,8 @@ const external_client_booking_data = {
 }
 
 submitButton.addEventListener("click", function (event) {
-    // event.preventDefault();
-
+    event.preventDefault();
     submitButton.disabled = true;
-
     external_client_booking_data.client_name = document.getElementById("externalclientname").value.trim();
     external_client_booking_data.phone_number = document.getElementById("externalclientnumber").value.trim();
     external_client_booking_data.customer_email = document.getElementById("externalclientemail").value.trim();
@@ -423,12 +421,9 @@ submitButton.addEventListener("click", function (event) {
 
    if (external_client_booking_data.money_collected === "yes") {
         const currentDate = new Date();
-        const formattedDate = `${String(currentDate.getDate()).padStart(2, '0')}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${currentDate.getFullYear()}`;
+        const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
         external_client_booking_data.money_collected_date = formattedDate;
-       
     }
-
-     console.log("Money Collected Date:", external_client_booking_data.money_collected_date);
      
     // Validating the form
     const missingFields = [];
@@ -451,7 +446,6 @@ submitButton.addEventListener("click", function (event) {
         alert(`Please fill in the following fields correctly:\n- ${missingFields.join("\n- ")}`);
         return;
     } else {
-
         let bookingData = {
             doctype: "Room Booking slot",
             customer_type: "External Client",
@@ -473,10 +467,6 @@ submitButton.addEventListener("click", function (event) {
             booking_time: JSON.stringify(external_client_booking_data.booking_time)
         }
 
-        // bookingData = JSON.stringify(bookingData);
-        
-        console.log("bookingData = ", bookingData);
-        console.log("Money Collected Date:", external_client_booking_data.money_collected_date);
 
         frappe.call({
             method: "frappe.client.insert",
@@ -488,7 +478,7 @@ submitButton.addEventListener("click", function (event) {
                     alert("Booking created successfully!");
                     setTimeout(() => {
                         submitButton.disabled = false;
-                        // location.reload(); // Reload the page after a delay
+                        location.reload(); // Reload the page after a delay
                     }, 2000);
                 } else {
                     alert("Error creating booking!");
