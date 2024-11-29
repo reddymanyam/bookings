@@ -403,7 +403,9 @@ const external_client_booking_data = {
 
 submitButton.addEventListener("click", function (event) {
     event.preventDefault();
+
     submitButton.disabled = true;
+
     external_client_booking_data.client_name = document.getElementById("externalclientname").value.trim();
     external_client_booking_data.phone_number = document.getElementById("externalclientnumber").value.trim();
     external_client_booking_data.customer_email = document.getElementById("externalclientemail").value.trim();
@@ -446,6 +448,7 @@ submitButton.addEventListener("click", function (event) {
         alert(`Please fill in the following fields correctly:\n- ${missingFields.join("\n- ")}`);
         return;
     } else {
+
         let bookingData = {
             doctype: "Room Booking slot",
             customer_type: "External Client",
