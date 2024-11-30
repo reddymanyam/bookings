@@ -11,7 +11,6 @@ function isValidMobileNumber(mobileNo) {
     return /^\d{10}$/.test(mobileNo);
 }
 
-
 // Function to check for leads based on mobile number and email
 async function checkLeads() {
     const mobileNo = document.getElementById("externalclientnumber").value.trim();
@@ -136,6 +135,7 @@ function updateLeadIdDropdown(newLeadId) {
     }
 }
 
+// Modified fetchFormData to handle different scenarios
 function fetchFormData(doctype, field, filters = []) {
     frappe.call({
         method: "frappe.client.get_list",
@@ -145,8 +145,8 @@ function fetchFormData(doctype, field, filters = []) {
             filters: filters,
         },
         callback: function (response) {
-            if (doctype === 'Property Location' || doctype === 'Room Type') {
-                const selectElement = document.getElementById(doctype === 'Property Location' ? 'location' : 'room_type');
+            if (doctype === 'Property Location') {
+                const selectElement = document.getElementById('location');
                 selectElement.innerHTML = '';
                 response.message.forEach(item => {
                     const option = document.createElement('option');
@@ -160,7 +160,9 @@ function fetchFormData(doctype, field, filters = []) {
 
                 if (response.message.length === 0) {
                     roomSelectElement.innerHTML = '<option value="">No rooms found</option>';
+                    roomSelectElement.disabled = true;
                 } else {
+                    roomSelectElement.disabled = false;
                     response.message.forEach(item => {
                         const option = document.createElement('option');
                         option.value = item[field];
@@ -168,6 +170,50 @@ function fetchFormData(doctype, field, filters = []) {
                         roomSelectElement.appendChild(option);
                     });
                 }
+            }
+        }
+    });
+}
+
+// New function to fetch room types dynamically
+function fetchRoomTypes(location) {
+    frappe.call({
+        method: "frappe.client.get_list",
+        args: {
+            doctype: 'Rooms',
+            fields: ['room_type'],
+            filters: [['location', '=', location]],
+            group_by: 'room_type'
+        },
+        callback: function (response) {
+            const roomTypeSelect = document.getElementById('room_type');
+            roomTypeSelect.innerHTML = ''; // Clear existing options
+
+            if (response.message && response.message.length > 0) {
+                // Populate room types that have rooms in the selected location
+                response.message.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.room_type;
+                    option.textContent = item.room_type;
+                    roomTypeSelect.appendChild(option);
+                });
+
+                // Trigger room type change to fetch initial rooms
+                if (roomTypeSelect.options.length > 0) {
+                    roomTypeSelect.selectedIndex = 0;
+                    roomTypeSelect.dispatchEvent(new Event('change'));
+                }
+            } else {
+                // No room types available for this location
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = 'No Room Types Available';
+                roomTypeSelect.appendChild(option);
+
+                // Clear rooms and reset price
+                const roomSelect = document.getElementById('room');
+                roomSelect.innerHTML = '<option value="">No Rooms Available</option>';
+                document.getElementById('price_per_hour').innerHTML = '0';
             }
         }
     });
@@ -195,29 +241,33 @@ function fetchPrice(location, roomType) {
     });
 }
 
+// Event listeners for dynamic filtering
 document.addEventListener('DOMContentLoaded', () => {
     fetchFormData('Property Location', 'name');
-    fetchFormData('Room Type', 'name');
 });
 
 document.getElementById('location').addEventListener('change', function () {
     const selectedLocation = this.value;
-    const selectedRoomType = document.getElementById('room_type').value;
-    fetchRooms(selectedLocation, selectedRoomType);
+    
+    // Fetch room types specific to this location
+    fetchRoomTypes(selectedLocation);
 });
 
 document.getElementById('room_type').addEventListener('change', function () {
     const selectedLocation = document.getElementById('location').value;
     const selectedRoomType = this.value;
+    
+    // Fetch rooms for the selected location and room type
     fetchRooms(selectedLocation, selectedRoomType);
     fetchPrice(selectedLocation, selectedRoomType);
 });
 
 function fetchRooms(location, roomType) {
-    const filters = [['location', '=', location]];
-    if (roomType) {
-        filters.push(['room_type', '=', roomType]);
-    }
+    const filters = [
+        ['location', '=', location],
+        ['room_type', '=', roomType]
+    ];
+    
     fetchFormData('Rooms', 'name', filters);
 }
 
@@ -257,12 +307,6 @@ async function fetchBookedSlots(location, roomType, room, dates) {
     });
 }
 
-function getSelectedSlots() {
-    // let selected = document.querySelectorAll(".selected");
-    const selectedSlots = document.querySelectorAll('.selected');
-    return Array.from(selectedSlots).map(slot => slot.textContent);
-}
-
 async function generateNewTimeSlots(date) {
     const location = document.getElementById('location').value;
     const roomType = document.getElementById('room_type').value;
@@ -278,17 +322,13 @@ async function generateNewTimeSlots(date) {
     const startOfDay = new Date(`${date}T00:00:00`);
     const endOfDay = new Date(`${date}T23:30:00`);
 
+    // Modified logic to round to the nearest 30-minute interval
     let start = (new Date(date).toDateString() === currentDate.toDateString()) ?
         new Date(currentTime) : startOfDay;
 
-    if (start.getMinutes() >= 30) {
-        start.setMinutes(0);
-        start.setHours(start.getHours() + 1);
-    } else if (start.getMinutes() > 0) {
-        start.setMinutes(30);
-    } else {
-        start.setMinutes(0);
-    }
+    // Round down to the nearest 30-minute interval
+    const minutes = start.getMinutes();
+    start.setMinutes(minutes >= 30 ? 30 : 0);
 
     if (start > endOfDay) return;
 
@@ -417,7 +457,7 @@ const external_client_booking_data = {
 }
 
 submitButton.addEventListener("click", function (event) {
-    event.preventDefault();
+    // event.preventDefault();
 
     submitButton.disabled = true;
 
@@ -436,7 +476,7 @@ submitButton.addEventListener("click", function (event) {
     external_client_booking_data.booking_time = getSelectedSlots();
     external_client_booking_data.total_hours = getSelectedSlots().length / 2;
 
-   if (external_client_booking_data.money_collected === "yes") {
+   if (external_client_booking_data.money_collected === "Yes") {
         const currentDate = new Date();
         const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
         external_client_booking_data.money_collected_date = formattedDate;
@@ -485,7 +525,7 @@ submitButton.addEventListener("click", function (event) {
             booking_time: JSON.stringify(external_client_booking_data.booking_time)
         }
 
-
+        
         frappe.call({
             method: "frappe.client.insert",
             args: {
@@ -496,7 +536,7 @@ submitButton.addEventListener("click", function (event) {
                     alert("Booking created successfully!");
                     setTimeout(() => {
                         submitButton.disabled = false;
-                        location.reload(); // Reload the page after a delay
+                        // location.reload();  // Reload the page after a delay
                     }, 2000);
                 } else {
                     alert("Error creating booking!");
