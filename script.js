@@ -6,13 +6,23 @@ let roomPrice = 0;
 const submitButton = document.getElementById('submitButton');
 const clearButton = document.getElementById('clearButton');
 
+function isValidMobileNumber(mobileNo) {
+    // Check if mobile number is exactly 10 digits
+    return /^\d{10}$/.test(mobileNo);
+}
+
 
 // Function to check for leads based on mobile number and email
 async function checkLeads() {
     const mobileNo = document.getElementById("externalclientnumber").value.trim();
     const email = document.getElementById("externalclientemail").value.trim();
 
-    if (!mobileNo || !email) {
+    if (!isValidMobileNumber(mobileNo)) {
+        alert("Mobile number must be exactly 10 digits long.");
+        return;
+    }
+
+    if (!email) {
         alert("Please fill in both Mobile Number and Email.");
         return;
     }
@@ -82,8 +92,13 @@ async function createLead() {
     const name = document.getElementById("externalclientname").value.trim();
     const companyName = document.getElementById("company").value.trim();
 
-    if (!mobileNo || !email || !name || !companyName) {
-        alert("Mobile number and email and name and companyName are required to create a lead.");
+    if (!isValidMobileNumber(mobileNo)) {
+        alert("Mobile number must be exactly 10 digits long.");
+        return;
+    }
+
+    if (!email || !name || !companyName) {
+        alert("Mobile number and email and name and company name are required to create a lead.");
         return;
     }
 
