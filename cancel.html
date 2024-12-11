@@ -59,7 +59,7 @@
                 <label for="booking_date_filter" class="font-weight-bold">From Date : </label>
                 <input type="date" id="booking_date_filter" value="">
             </div>
-            
+
             <!--To Date-->
             <div class="flex flex-column justify-center w-44">
                 <label for="toDate" class="font-weight-bold">To Date : </label>
@@ -83,6 +83,8 @@
                             <th class="text-green-800">Start time</th>
                             <th class="text-red-800">End time</th>
                             <th class="font-bold">Price (in ₹)</th>
+                            <th class="font-bold">Move Wave Off</th>
+                            <th class="font-bold">Complementary Wave Off</th>
                             <!--<th class="font-bold">Card Status</th>-->
                             <!--<th class="font-bold">Money collected</th>-->
                         </tr>
@@ -200,7 +202,7 @@
                                             <!-- Div to show and edit money collected and card status -->
                                             <div id="editDiv">
                                                 <hr class="new-divider">
-                                                <div class="flex justify-around items-center mt-2">
+                                                < class="flex justify-around items-center mt-2">
                                                     <!-- Money Collected -->
                                                     <div id="money_collected_div">
                                                         <label for="money_collected" class="text-xs">Money
@@ -210,15 +212,38 @@
                                                             <option value="Yes">Yes</option>
                                                         </select>
                                                     </div>
+                                                    
 
-                                                     <!--Card Status -->
+                                                    <div class="flex justify-around items-center mt-2">
+                                                        <!-- Move Wave Off -->
+                                                        <div id="move_wave_off">
+                                                            <label for="move_wave_off_checkbox" class="text-xs">Move
+                                                                Wave Off</label>
+                                                            <input type="checkbox" id="move_wave_off_checkbox"
+                                                                name="move_wave_off">
+                                                        </div>
+
+                                                        <div class="flex justify-around items-center mt-2">
+                                                            <!-- Complementary Wave Off -->
+                                                            <div id="complementary_wave_off">
+                                                                <label for="complementary_wave_off_checkbox"
+                                                                    class="text-xs">Complementary Wave Off</label>
+                                                                <input type="checkbox"
+                                                                    id="complementary_wave_off_checkbox"
+                                                                    name="complementary_wave_off">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <!--Card Status -->
                                                     <!--<div class="mt-2" id="card_status_div">-->
-                                                        <!--<label for="card_status" class="text-xs">Card Status</label>-->
-                                                        <!--<select id="card_status" name="card_status">-->
-                                                        <!--    <option value="Not issued">Not issued</option>-->
-                                                        <!--    <option value="Issued">Issued</option>-->
-                                                        <!--    <option value="Returned">Returned</option>-->
-                                                        <!--</select>-->
+                                                    <!--<label for="card_status" class="text-xs">Card Status</label>-->
+                                                    <!--<select id="card_status" name="card_status">-->
+                                                    <!--    <option value="Not issued">Not issued</option>-->
+                                                    <!--    <option value="Issued">Issued</option>-->
+                                                    <!--    <option value="Returned">Returned</option>-->
+                                                    <!--</select>-->
                                                     <!--</div>-->
                                                 </div>
                                             </div>
@@ -362,7 +387,7 @@
                         </div>
 
                         <!-- Price per hour -->
-                        <div>  
+                        <div>
                             <label for="rate">Price per hour (in ₹)</label>
                             <p name="rate" id="price_per_hour"> 0 </p>
                         </div>
