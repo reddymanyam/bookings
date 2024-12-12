@@ -176,7 +176,8 @@ async function fetchAllBookingsForRecord(record) {
         ['location', '=', record.location],
         ['room_type', '=', record.room_type],
         ['room', '=', record.room],
-        ['status','=', 'Cancelled']  
+        ['status','=', 'Cancelled'],
+         
     ];
 
     return new Promise((resolve, reject) => {
@@ -766,7 +767,10 @@ async function fetchData(pagePending, checkData = false, location, roomType, roo
         'price',
         'money_collected',
         // 'card_status',
-        'customer_name'
+        'customer_name',
+        'wave_off_amount',
+        'wave_off_complimentary'
+
     ]
 
     // Call the API to fetch the data
@@ -834,6 +838,8 @@ function add30Minutes(time) {
 function constructTable(data, slNo, tableName) {
 
     let tableBody = document.querySelector(`.${tableName}`);
+    console.log("dataaa....", data);
+    
 
     let tableRow = document.createElement("tr");
     tableRow.classList.add("hover", "tableRow");
@@ -851,6 +857,9 @@ function constructTable(data, slNo, tableName) {
     let date = data.booking_date.split("-");
     date = `${date[2]}/${date[1]}/${date[0]}`;
 
+    let waveOffAmount = data.wave_off_amount === 0 ? "No" : "Yes";
+    let waveOffComplimentary = data.wave_off_complimentary === 0 ? "No" : "Yes";
+
     // Create the row with the provided data
     tableRow.setAttribute("onClick", `showDetails('${data.name}', '${startTime}', '${endTime}')`);
     tableRow.innerHTML = `
@@ -866,6 +875,8 @@ function constructTable(data, slNo, tableName) {
         <td class="font-bold ${data.client_type && data.client_type !== 'Deposit' ? 'text-blue-700' : ''}">
             ${data.price}
         </td>
+        <td>${waveOffAmount }</td>
+        <td>${waveOffComplimentary}</td>
        
     `;
 
