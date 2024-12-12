@@ -83,8 +83,9 @@
                             <th class="text-green-800">Start time</th>
                             <th class="text-red-800">End time</th>
                             <th class="font-bold">Price (in ₹)</th>
-                            <th class="font-bold">Move Wave Off</th>
+                            <th class="font-bold">Money Wave Off</th>
                             <th class="font-bold">Complementary Wave Off</th>
+                            <th class="font-bold">Accounts Verification</th>
                             <!--<th class="font-bold">Card Status</th>-->
                             <!--<th class="font-bold">Money collected</th>-->
                         </tr>
@@ -202,7 +203,7 @@
                                             <!-- Div to show and edit money collected and card status -->
                                             <div id="editDiv">
                                                 <hr class="new-divider">
-                                                < class="flex justify-around items-center mt-2">
+                                                <div class="flex justify-around items-center mt-2">
                                                     <!-- Money Collected -->
                                                     <div id="money_collected_div">
                                                         <label for="money_collected" class="text-xs">Money
@@ -212,28 +213,59 @@
                                                             <option value="Yes">Yes</option>
                                                         </select>
                                                     </div>
+                                            </div>
+
                                                     
+                                            <table class="w-full">
+                                                <tr>
+                                                    <td class="p-2">
+                                                        <label for="move_wave_off_checkbox" class="text-md font-medium text-black">
+                                                            Money Wave Off
+                                                        </label>
+                                                    </td>
+                                                    <td class="p-2">
+                                                        <input 
+                                                            type="checkbox" 
+                                                            id="move_wave_off_checkbox" 
+                                                            name="move_wave_off" 
+                                                            class="form-checkbox h-4 w-4 text-blue-600 focus:ring focus:ring-blue-300"
+                                                        />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="p-2">
+                                                        <label for="complementary_wave_off_checkbox" class="text-md font-medium text-black">
+                                                            Complementary Wave Off
+                                                        </label>
+                                                    </td>
+                                                    <td class="p-2">
+                                                        <input 
+                                                            type="checkbox" 
+                                                            id="complementary_wave_off_checkbox" 
+                                                            name="complementary_wave_off" 
+                                                            class="form-checkbox h-4 w-4 text-green-600 focus:ring focus:ring-green-300"
+                                                        />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="p-2">
+                                                        <label for="accounts_verification_checkbox" class="text-md font-medium text-black">
+                                                            Accounts Verification
+                                                        </label>
+                                                    </td>
+                                                    <td class="p-2">
+                                                        <input 
+                                                            type="checkbox" 
+                                                            id="accounts_verification_checkbox" 
+                                                            name="accounts_verification" 
+                                                            class="form-checkbox h-4 w-4 text-green-600 focus:ring focus:ring-green-300"
+                                                        />
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            
 
-                                                    <div class="flex justify-around items-center mt-2">
-                                                        <!-- Move Wave Off -->
-                                                        <div id="move_wave_off">
-                                                            <label for="move_wave_off_checkbox" class="text-xs">Move
-                                                                Wave Off</label>
-                                                            <input type="checkbox" id="move_wave_off_checkbox"
-                                                                name="move_wave_off">
-                                                        </div>
-
-                                                        <div class="flex justify-around items-center mt-2">
-                                                            <!-- Complementary Wave Off -->
-                                                            <div id="complementary_wave_off">
-                                                                <label for="complementary_wave_off_checkbox"
-                                                                    class="text-xs">Complementary Wave Off</label>
-                                                                <input type="checkbox"
-                                                                    id="complementary_wave_off_checkbox"
-                                                                    name="complementary_wave_off">
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                    
 
 
                                                     <!--Card Status -->
