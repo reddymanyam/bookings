@@ -176,8 +176,8 @@ async function fetchAllBookingsForRecord(record) {
         ['location', '=', record.location],
         ['room_type', '=', record.room_type],
         ['room', '=', record.room],
-        ['status','=', 'Cancelled'],
-         
+        ['status', '=', 'Cancelled'],
+
     ];
 
     return new Promise((resolve, reject) => {
@@ -468,19 +468,102 @@ function appendDetails(data) {
     }
 }
 
+
+
+
 // Assuming the user clicks on a row in the table to open a record
-function showDetails(id, startTime, endTime) {
-    submitRecordBtn.disabled = true;
-    resetModalContent();
+// function showDetails(id, startTime, endTime) {
 
-    // Assign to show variables
-    startTimeToShow = startTime;
-    endTimeToShow = endTime
+//     let MoneyWaveOff = document.getElementById("money_wave_off_checkbox");
+//     let ComplementaryWaveOff = document.getElementById("complementary_wave_off_checkbox");
+//     let AccountVerification = document.getElementById("accounts_verification_checkbox");
 
-    my_modal_3.showModal(); // Open the modal
-    fetchSingleData(id); // Fetch and open the record
+//     submitRecordBtn.disabled = true;  //---------------------------------------------------------------------
+//     resetModalContent();
+
+//     // Assign to show variables
+//     startTimeToShow = startTime;
+//     endTimeToShow = endTime
+
+//     my_modal_3.showModal(); // Open the modal
+//     fetchSingleData(id); // Fetch and open the record
+
+//     // Enable the submit button if any checkbox is checked
+//     const checkSubmitButtonState = () => {
+
+//         if (
+//             MoneyWaveOff.checked ||
+//             ComplementaryWaveOff.checked ||
+//             AccountVerification.checked
+//         ) {
+//             submitRecordBtn.disabled = false; // Enable the button if any checkbox is checked
+//         } else {
+//             submitRecordBtn.disabled = true; // Keep it disabled if none are checked
+//         }
+//     };
+
+//     // Add event listeners to the checkboxes
+//     MoneyWaveOff.addEventListener("change", checkSubmitButtonState);
+//     ComplementaryWaveOff.addEventListener("change", checkSubmitButtonState);
+//     AccountVerification.addEventListener("change", checkSubmitButtonState);
+
+//     checkSubmitButtonState()
+// }
+
+
+// Add null checks and provide fallback
+let MoneyWaveOff = document.getElementById("money_wave_off_checkbox");
+let ComplementaryWaveOff = document.getElementById("complementary_wave_off_checkbox");
+let AccountVerification = document.getElementById("accounts_verification_checkbox");
+// let submitRecordBtn = document.getElementById("submit-record-button");
+
+// Add null checks before adding event listeners
+if (MoneyWaveOff) {
+    MoneyWaveOff.addEventListener('change', checkCheckboxes);
+} else {
+    console.error("Money Wave Off checkbox not found");
 }
 
+if (ComplementaryWaveOff) {
+    ComplementaryWaveOff.addEventListener('change', checkCheckboxes);
+} else {
+    console.error("Complementary Wave Off checkbox not found");
+}
+
+if (AccountVerification) {
+    AccountVerification.addEventListener('change', checkCheckboxes);
+} else {
+    console.error("Account Verification checkbox not found");
+}
+
+if (submitRecordBtn) {
+    // Initial state - disable submit button
+    submitRecordBtn.disabled = true;
+} else {
+    console.error("Submit record button not found");
+}
+
+function checkCheckboxes() {
+    if (submitRecordBtn) {
+        submitRecordBtn.disabled = !(
+            (MoneyWaveOff && MoneyWaveOff.checked) || 
+            (ComplementaryWaveOff && ComplementaryWaveOff.checked) || 
+            (AccountVerification && AccountVerification.checked)
+        );
+    }
+}
+
+function showDetails(id, startTime, endTime) {
+    if (submitRecordBtn) {
+        submitRecordBtn.disabled = true;
+    }
+    
+    resetModalContent();
+    startTimeToShow = startTime;
+    endTimeToShow = endTime;
+    my_modal_3.showModal();
+    fetchSingleData(id);
+}
 
 // Toast Notification
 const toastStyle = document.createElement('style');
@@ -769,7 +852,8 @@ async function fetchData(pagePending, checkData = false, location, roomType, roo
         // 'card_status',
         'customer_name',
         'wave_off_amount',
-        'wave_off_complimentary'
+        'wave_off_complimentary',
+        'verified_by_accounts',
 
     ]
 
@@ -838,7 +922,6 @@ function add30Minutes(time) {
 function constructTable(data, slNo, tableName) {
 
     let tableBody = document.querySelector(`.${tableName}`);
-    console.log("dataaa....", data);
     
 
     let tableRow = document.createElement("tr");
@@ -859,6 +942,7 @@ function constructTable(data, slNo, tableName) {
 
     let waveOffAmount = data.wave_off_amount === 0 ? "No" : "Yes";
     let waveOffComplimentary = data.wave_off_complimentary === 0 ? "No" : "Yes";
+    let accountVerification = data.verified_by_accounts === 0 ? "No" : "Yes";
 
     // Create the row with the provided data
     tableRow.setAttribute("onClick", `showDetails('${data.name}', '${startTime}', '${endTime}')`);
@@ -875,19 +959,22 @@ function constructTable(data, slNo, tableName) {
         <td class="font-bold ${data.client_type && data.client_type !== 'Deposit' ? 'text-blue-700' : ''}">
             ${data.price}
         </td>
-        <td>${waveOffAmount }</td>
+        <td>${waveOffAmount}</td>
         <td>${waveOffComplimentary}</td>
+        <td>${accountVerification}</td>
        
     `;
 
     tableBody.appendChild(tableRow);
+  
 }
 
 // Update booking status
 function updateStatus() {
 
     submitRecordBtn.disabled = true;
-
+     
+   
     //---------------utility Function ----------------------
     // Get the current date in yyyy-mm-dd format
     function getCurrentDate() {
@@ -1470,10 +1557,10 @@ function getComplimentary(lead_id, user_room_type, date, price_per_hour, bookedH
         callback: function (response) {
             if (response && response.message) {
                 // Parse complimentary hours, defaulting to 0 if not available
-                const complimentary_hours_available = 
-                    response.message.complimentary_avaliable === "No complimentary hours" 
-                    ? 0 
-                    : parseFloat(response.message.complimentary_avaliable || 0);
+                const complimentary_hours_available =
+                    response.message.complimentary_avaliable === "No complimentary hours"
+                        ? 0
+                        : parseFloat(response.message.complimentary_avaliable || 0);
 
                 let billableHours = 0;
                 let price = 0;
@@ -1505,7 +1592,7 @@ function getComplimentary(lead_id, user_room_type, date, price_per_hour, bookedH
                     // Partially covered by complimentary hours
                     billableHours = bookedHours - complimentary_hours_available;
                     billable_hours.innerHTML = `${billableHours} ${billableHours < 2 ? "hr" : "hrs"}`;
-                    
+
                     // Calculate price with GST
                     price = price_per_hour * billableHours;
                     let gst = price * 0.18;
@@ -1520,7 +1607,7 @@ function getComplimentary(lead_id, user_room_type, date, price_per_hour, bookedH
                 complimentary_available.innerHTML = "0 hr";
                 booked_hours.innerHTML = `${bookedHours} ${bookedHours < 2 ? "hr" : "hrs"}`;
                 billable_hours.innerHTML = `${bookedHours} ${bookedHours < 2 ? "hr" : "hrs"}`;
-                
+
                 // Calculate full price
                 let price = price_per_hour * bookedHours;
                 let gst = price * 0.18;
@@ -1533,12 +1620,12 @@ function getComplimentary(lead_id, user_room_type, date, price_per_hour, bookedH
         },
         error: function (err) {
             console.error("Error fetching Complimentary Details:", err);
-            
+
             // Fallback error handling
             complimentary_available.innerHTML = "0 hr";
             booked_hours.innerHTML = `${bookedHours} ${bookedHours < 2 ? "hr" : "hrs"}`;
             billable_hours.innerHTML = `${bookedHours} ${bookedHours < 2 ? "hr" : "hrs"}`;
-            
+
             let price = price_per_hour * bookedHours;
             let gst = price * 0.18;
             let totalPrice = price + gst;
@@ -1554,14 +1641,14 @@ function showDetails_of_invoice(formData) {
 
     // Parse the booking_time JSON string into an array
     const bookingTime = formData.booking_time;
-    
-    const startTime = bookingTime[0].split(' to ')[0];
-    
-    let endTime = bookingTime[bookingTime.length - 1].split(' to ')[1] ||  (bookingTime[bookingTime.length - 1].includes(' to ') 
-                   ? bookingTime[bookingTime.length - 1].split(' to ')[1] 
-                   : bookingTime[bookingTime.length - 1]);
 
-    
+    const startTime = bookingTime[0].split(' to ')[0];
+
+    let endTime = bookingTime[bookingTime.length - 1].split(' to ')[1] || (bookingTime[bookingTime.length - 1].includes(' to ')
+        ? bookingTime[bookingTime.length - 1].split(' to ')[1]
+        : bookingTime[bookingTime.length - 1]);
+
+
     //Showing details in invoice modal
     customer_invoice.innerHTML = formData.customer;
     email_invoice.innerHTML = formData.email;
@@ -1642,7 +1729,7 @@ function getSelectedSlots() {
     const selectedSlots = document.querySelectorAll('.time-slot.selected');
     return Array.from(selectedSlots).map(slot => {
         const times = slot.textContent.split(' to ');
-        return times[0]; 
+        return times[0];
     });
 }
 
