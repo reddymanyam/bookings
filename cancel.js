@@ -27,7 +27,7 @@ const confirmBookingbtn = document.querySelector(".confirmBookingbtn");
 const slotsContainer = document.getElementById('slotsContainer');
 const myDateInput = document.getElementById('myDate');
 // DOM Elements
-const dashboardBtn = document.getElementById("dashboard-btn");
+// const dashboardBtn = document.getElementById("dashboard-btn");
 const newBookingBtn = document.getElementById("newbooking-btn");
 const externalNewbookingBtn = document.getElementById("external_newbooking_btn");
 const firstSection = document.getElementById('first-section');
@@ -88,10 +88,10 @@ clearButton.style.visibility = 'hidden'
 
 //toggle for nav bar
 // Event Listeners for Navigation Buttons
-dashboardBtn.addEventListener("click", function () {
-    firstSection.style.display = 'block';
-    secondSection.style.display = 'none';
-});
+// dashboardBtn.addEventListener("click", function () {
+//     firstSection.style.display = 'block';
+//     secondSection.style.display = 'none';
+// });
 
 // newBookingBtn.addEventListener("click", function () {
 //     firstSection.style.display = 'none';
@@ -469,102 +469,6 @@ function appendDetails(data) {
 }
 
 
-
-
-// Assuming the user clicks on a row in the table to open a record
-// function showDetails(id, startTime, endTime) {
-
-//     let MoneyWaveOff = document.getElementById("money_wave_off_checkbox");
-//     let ComplementaryWaveOff = document.getElementById("complementary_wave_off_checkbox");
-//     let AccountVerification = document.getElementById("accounts_verification_checkbox");
-
-//     submitRecordBtn.disabled = true;  //---------------------------------------------------------------------
-//     resetModalContent();
-
-//     // Assign to show variables
-//     startTimeToShow = startTime;
-//     endTimeToShow = endTime
-
-//     my_modal_3.showModal(); // Open the modal
-//     fetchSingleData(id); // Fetch and open the record
-
-//     // Enable the submit button if any checkbox is checked
-//     const checkSubmitButtonState = () => {
-
-//         if (
-//             MoneyWaveOff.checked ||
-//             ComplementaryWaveOff.checked ||
-//             AccountVerification.checked
-//         ) {
-//             submitRecordBtn.disabled = false; // Enable the button if any checkbox is checked
-//         } else {
-//             submitRecordBtn.disabled = true; // Keep it disabled if none are checked
-//         }
-//     };
-
-//     // Add event listeners to the checkboxes
-//     MoneyWaveOff.addEventListener("change", checkSubmitButtonState);
-//     ComplementaryWaveOff.addEventListener("change", checkSubmitButtonState);
-//     AccountVerification.addEventListener("change", checkSubmitButtonState);
-
-//     checkSubmitButtonState()
-// }
-
-
-// Add null checks and provide fallback
-let MoneyWaveOff = document.getElementById("money_wave_off_checkbox");
-let ComplementaryWaveOff = document.getElementById("complementary_wave_off_checkbox");
-let AccountVerification = document.getElementById("accounts_verification_checkbox");
-// let submitRecordBtn = document.getElementById("submit-record-button");
-
-// Add null checks before adding event listeners
-if (MoneyWaveOff) {
-    MoneyWaveOff.addEventListener('change', checkCheckboxes);
-} else {
-    console.error("Money Wave Off checkbox not found");
-}
-
-if (ComplementaryWaveOff) {
-    ComplementaryWaveOff.addEventListener('change', checkCheckboxes);
-} else {
-    console.error("Complementary Wave Off checkbox not found");
-}
-
-if (AccountVerification) {
-    AccountVerification.addEventListener('change', checkCheckboxes);
-} else {
-    console.error("Account Verification checkbox not found");
-}
-
-if (submitRecordBtn) {
-    // Initial state - disable submit button
-    submitRecordBtn.disabled = true;
-} else {
-    console.error("Submit record button not found");
-}
-
-function checkCheckboxes() {
-    if (submitRecordBtn) {
-        submitRecordBtn.disabled = !(
-            (MoneyWaveOff && MoneyWaveOff.checked) || 
-            (ComplementaryWaveOff && ComplementaryWaveOff.checked) || 
-            (AccountVerification && AccountVerification.checked)
-        );
-    }
-}
-
-function showDetails(id, startTime, endTime) {
-    if (submitRecordBtn) {
-        submitRecordBtn.disabled = true;
-    }
-    
-    resetModalContent();
-    startTimeToShow = startTime;
-    endTimeToShow = endTime;
-    my_modal_3.showModal();
-    fetchSingleData(id);
-}
-
 // Toast Notification
 const toastStyle = document.createElement('style');
 toastStyle.innerHTML = `
@@ -854,8 +758,39 @@ async function fetchData(pagePending, checkData = false, location, roomType, roo
         'wave_off_amount',
         'wave_off_complimentary',
         'verified_by_accounts',
+        'cancel_time',
 
     ]
+
+    function checkDateDifferenceAndToggleButtons(data) {
+        // Parse the booking_date and cancel_time from the data object
+        const bookingDate = new Date(data.booking_date);
+        const cancellationDate = data.cancel_time ? new Date(data.cancel_time) : null;
+         
+        console.log("booking and cancllation date", bookingDate, cancellationDate)
+    
+        if (cancellationDate) {
+            // Calculate the difference in days
+            const timeDifference = Math.abs(cancellationDate - bookingDate);
+            console.log("time difference", timeDifference);
+            
+            const dayDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+            console.log("day diff",dayDifference);
+            
+    
+            // Disable checkboxes and submit button if the difference is more than 3 days
+            if (dayDifference > 3) {
+                disableCheckboxesAndButton();
+            }
+        }
+    }
+    
+    function disableCheckboxesAndButton() {
+        if (MoneyWaveOff) MoneyWaveOff.disabled = true;
+        if (ComplementaryWaveOff) ComplementaryWaveOff.disabled = true;
+        if (AccountVerification) AccountVerification.disabled = true;
+        if (submitRecordBtn) submitRecordBtn.disabled = true;
+    }
 
     // Call the API to fetch the data
     frappe.call({
@@ -886,6 +821,7 @@ async function fetchData(pagePending, checkData = false, location, roomType, roo
                 noRecordsDiv.style.display = 'none';
                 paginationDiv.style.display = 'flex';
                 response.message.forEach((res, index) => {
+                    checkDateDifferenceAndToggleButtons(res);
                     constructTable(res, index + 1, "tableBody");
                 });
 
@@ -922,7 +858,10 @@ function add30Minutes(time) {
 function constructTable(data, slNo, tableName) {
 
     let tableBody = document.querySelector(`.${tableName}`);
-    
+    console.log("dataaa....", data);
+
+    const checkboox = data.date
+
 
     let tableRow = document.createElement("tr");
     tableRow.classList.add("hover", "tableRow");
@@ -966,7 +905,64 @@ function constructTable(data, slNo, tableName) {
     `;
 
     tableBody.appendChild(tableRow);
-  
+   
+}
+/*
+*check box verifuication
+*/
+
+// Add null checks and provide fallback
+let MoneyWaveOff = document.getElementById("money_wave_off_checkbox");
+let ComplementaryWaveOff = document.getElementById("complementary_wave_off_checkbox");
+let AccountVerification = document.getElementById("accounts_verification_checkbox");
+// let submitRecordBtn = document.getElementById("submit-record-button");
+
+// Add null checks before adding event listeners
+if (MoneyWaveOff) {
+    MoneyWaveOff.addEventListener('change', checkCheckboxes);
+} else {
+    console.error("Money Wave Off checkbox not found");
+}
+
+if (ComplementaryWaveOff) {
+    ComplementaryWaveOff.addEventListener('change', checkCheckboxes);
+} else {
+    console.error("Complementary Wave Off checkbox not found");
+}
+
+if (AccountVerification) {
+    AccountVerification.addEventListener('change', checkCheckboxes);
+} else {
+    console.error("Account Verification checkbox not found");
+}
+
+if (submitRecordBtn) {
+    // Initial state - disable submit button
+    submitRecordBtn.disabled = true;
+} else {
+    console.error("Submit record button not found");
+}
+
+function checkCheckboxes() {
+    if (submitRecordBtn) {
+        submitRecordBtn.disabled = !(
+            (MoneyWaveOff && MoneyWaveOff.checked) || 
+            (ComplementaryWaveOff && ComplementaryWaveOff.checked) || 
+            (AccountVerification && AccountVerification.checked)
+        );
+    }
+}
+
+function showDetails(id, startTime, endTime) {
+    if (submitRecordBtn) {
+        submitRecordBtn.disabled = true;
+    }
+    
+    resetModalContent();
+    startTimeToShow = startTime;
+    endTimeToShow = endTime;
+    my_modal_3.showModal();
+    fetchSingleData(id);
 }
 
 // Update booking status
