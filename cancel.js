@@ -759,9 +759,7 @@ async function fetchData(pagePending, checkData = false, location, roomType, roo
         'wave_off_amount',
         'wave_off_complimentary',
         'verified_by_accounts',
-        'cancel_time',
-        
-
+        'cancel_time',    
     ]
 
     function checkDateDifferenceAndToggleButtons(data) {
@@ -805,32 +803,38 @@ async function fetchData(pagePending, checkData = false, location, roomType, roo
             filters: filters
         },
         callback: function (response) {
-            const paginationDiv = document.querySelector('.pagination-controls-pending');
-            const noRecordsDiv = document.querySelector(".noRecordsDiv");
             const tableBody = document.querySelector(".tableBody");
             const table = document.querySelector(".table");
+            const noRecordsDiv = document.querySelector(".noRecordsDiv");
+            const paginationDiv = document.querySelector(".pagination-controls-pending");
+    
+            // Clear the table body
             tableBody.innerHTML = "";
-
+    
             if (response.message.length === 0) {
-                // If no records
+                // If no records, handle the empty state
+                console.log("No records found");
                 table.style.display = 'none';
                 noRecordsDiv.style.display = 'flex';
                 paginationDiv.style.display = 'none';
-                noRecordsDiv.innerHTML = `<h4 class="text-purple-800 text-sm font-bold">${noRecordsMessage}</h4>`;
             } else {
-                // If records are found
+                // Show table and pagination
                 table.style.display = 'block';
                 noRecordsDiv.style.display = 'none';
                 paginationDiv.style.display = 'flex';
+    
+                // Iterate through the response and process each record
                 response.message.forEach((res, index) => {
-                    checkDateDifferenceAndToggleButtons(res);
+                    // Construct table row
                     constructTable(res, index + 1, "tableBody");
+    
+                    // Toggle sections for wave-off amounts
+                    toggleWaveOffSections(res);
                 });
-
-                togglePaginationButtons('Approved', response.message.length);
             }
         }
     });
+    
 }
 
 
@@ -900,15 +904,43 @@ function constructTable(data, slNo, tableName) {
         <td class="font-bold ${data.client_type && data.client_type !== 'Deposit' ? 'text-blue-700' : ''}">
             ${data.price}
         </td>
-        <td>${waveOffAmount}</td>
-        <td>${waveOffComplimentary}</td>
-        <td>${accountVerification}</td>
+        <td id="waveOffAmountCell">${waveOffAmount}</td>
+        <td id="waveOffComplimentaryCell">${waveOffComplimentary}</td>
+        <td id="verifiedByAccountsCell">${accountVerification}</td>
        
     `;
 
     tableBody.appendChild(tableRow);
    
 }
+
+//toggle wave off display none section............
+
+function toggleWaveOffSections(data) {
+    // Get the current date
+    const currentDate = new Date();
+    const bookingDate = new Date(data.booking_date);
+
+    // Get the elements
+    const waveOffAmountCell = document.getElementById("waveOffAmountCell");
+    const waveOffComplimentaryCell = document.getElementById("waveOffComplimentaryCell");
+    const verifiedByAccountsCell = document.getElementById("verifiedByAccountsCell");
+
+    // Toggle display based on the date comparison
+    if (bookingDate >= currentDate) {
+        // Hide the sections
+        if (waveOffAmountCell) waveOffAmountCell.style.display = "none";
+        if (waveOffComplimentaryCell) waveOffComplimentaryCell.style.display = "none";
+        if (verifiedByAccountsCell) verifiedByAccountsCell.style.display = "none";
+    } else {
+        // Show the sections
+        if (waveOffAmountCell) waveOffAmountCell.style.display = "table-cell";
+        if (waveOffComplimentaryCell) waveOffComplimentaryCell.style.display = "table-cell";
+        if (verifiedByAccountsCell) verifiedByAccountsCell.style.display = "table-cell";
+    }
+}
+
+
 /*
 *check box verification
 */
