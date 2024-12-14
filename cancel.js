@@ -936,9 +936,16 @@ if (moneyWaveOff) {
 if (complementaryWaveOff) {
     complementaryWaveOff.addEventListener('change', (e) => {
         currentValueOfwaveOffComplimentary = e.target.checked;
+        if (currentValueOfwaveOffComplimentary !== previousValueOfwaveOffComplimentary) {
+            console.log("the condition is...... true");
+            submitRecordBtn.disabled = false;
+        }
+        else {
+            submitRecordBtn.disabled = true;
+        }
         console.log("Event  = ", e.target.checked);
         console.log("previousValueOfwaveOffComplimentary = ", previousValueOfwaveOffComplimentary);
-        submitRecordBtn.disabled = false;
+       
     });
 } else {
     console.error("Complementary Wave Off checkbox not found");
@@ -947,9 +954,16 @@ if (complementaryWaveOff) {
 if (accountVerificationBox) {
     accountVerificationBox.addEventListener('change', (e) => {
         currentValueOfaccountVerification = e.target.value;
+        if (currentValueOfaccountVerification !== previousValueOfaccountVerification) {
+            console.log("the condition is...... true");
+            submitRecordBtn.disabled = false;
+        }
+        else {
+            submitRecordBtn.disabled = true;
+        }
         console.log("Event  = ", e.target.checked);
         console.log("previousValueOfaccountVerification = ", previousValueOfaccountVerification);
-        submitRecordBtn.disabled = false;
+       
     });
 } else {
     console.error("Account Verification checkbox not found");
