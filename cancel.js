@@ -682,20 +682,20 @@ async function fetchTotalPages(location, roomType, room, dates, toDate) {
         filters.push(['room', '=', location + ' - ' + room]);
     }
 
-    frappe.call({
-        method: "frappe.client.get_list",
-        args: {
-            doctype: "Room Booking slot",
-            fields: ['name'],
-            filters: filters,
-            limit_page_length: 0
-        },
-        callback: function (response) {
-            let totalPendingRecords = response.message.length;
-            totalPagesPending = Math.ceil(totalPendingRecords / itemsPerPage);
-            document.querySelector("#total-pages-pending").innerHTML = totalPagesPending;
-        }
-    });
+    // frappe.call({
+    //     method: "frappe.client.get_list",
+    //     args: {
+    //         doctype: "Room Booking slot",
+    //         fields: ['name'],
+    //         filters: filters,
+    //         limit_page_length: 0
+    //     },
+    //     callback: function (response) {
+    //         let totalPendingRecords = response.message.length;
+    //         totalPagesPending = Math.ceil(totalPendingRecords / itemsPerPage);
+    //         document.querySelector("#total-pages-pending").innerHTML = totalPagesPending;
+    //     }
+    // });
 
 }
 
@@ -718,6 +718,7 @@ async function fetchData(pagePending, checkData = false, location, roomType, roo
         ['booking_date', 'between', [dates, toDate]],
         ['status', '=', 'Cancelled'],
         ['block_temp', '=', '0'],
+        ['docstatus', '=', '1']
     ];
 
     if (location) {
@@ -759,6 +760,7 @@ async function fetchData(pagePending, checkData = false, location, roomType, roo
         'wave_off_complimentary',
         'verified_by_accounts',
         'cancel_time',
+        
 
     ]
 
@@ -908,14 +910,13 @@ function constructTable(data, slNo, tableName) {
    
 }
 /*
-*check box verifuication
+*check box verification
 */
 
 // Add null checks and provide fallback
 let MoneyWaveOff = document.getElementById("money_wave_off_checkbox");
 let ComplementaryWaveOff = document.getElementById("complementary_wave_off_checkbox");
 let AccountVerification = document.getElementById("accounts_verification_checkbox");
-// let submitRecordBtn = document.getElementById("submit-record-button");
 
 // Add null checks before adding event listeners
 if (MoneyWaveOff) {
@@ -1003,9 +1004,11 @@ function updateStatus() {
             if (response) {
                 // showToast("Successfully updated!");
                 alert("Record updated successfully!");
+                console.log("the cancallation details are...", response);
+                
                 money_collected.value = response.message.money_collected ? response.message.money_collected : "No";
                 // card_status.value = response.message.card_status ? response.message.card_status : "Not issued";
-                window.location.reload();
+                // window.location.reload();
             }
         }
     });
