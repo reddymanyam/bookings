@@ -938,7 +938,7 @@ if (complementaryWaveOff) {
         currentValueOfwaveOffComplimentary = e.target.checked;
         console.log("Event  = ", e.target.checked);
         console.log("previousValueOfwaveOffComplimentary = ", previousValueOfwaveOffComplimentary);
-
+        submitRecordBtn.disabled = false;
     });
 } else {
     console.error("Complementary Wave Off checkbox not found");
@@ -949,7 +949,7 @@ if (accountVerificationBox) {
         currentValueOfaccountVerification = e.target.value;
         console.log("Event  = ", e.target.checked);
         console.log("previousValueOfaccountVerification = ", previousValueOfaccountVerification);
-
+        submitRecordBtn.disabled = false;
     });
 } else {
     console.error("Account Verification checkbox not found");
