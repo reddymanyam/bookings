@@ -1003,46 +1003,37 @@ function showDetails(id, startTime, endTime) {
 function updateStatus() {
 
     submitRecordBtn.disabled = true;
-    //---------------utility Function ----------------------
-    // Get the current date in yyyy-mm-dd format
-    function getCurrentDate() {
-        if (money_collected_value === "No") {
-            return null;
-        }
-        const date = new Date();
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Ensure two digits
-        const day = String(date.getDate()).padStart(2, '0'); // Ensure two digits
-        return `${year}-${month}-${day}`;
-    }
-    //---------------utility Function ----------------------
-
-    const currentDate = getCurrentDate();
-
+  
     // Update the booking in the database
-    // frappe.call({
-    //     method: "frappe.client.set_value",
-    //     args: {
-    //         doctype: "Room Booking slot",
-    //         name: PassId,
-    //         fieldname: {
-    //             "money_collected": money_collected_value,
-    //             // "card_status": card_status_value,
-    //             "money_collected_date": currentDate
-    //         }
-    //     },
-    //     callback: function (response) {
-    //         if (response) {
-    //             // showToast("Successfully updated!");
-    //             alert("Record updated successfully!");
-    //             console.log("the cancallation details are...", response);
+    frappe.call({
+        method: "frappe.client.set_value",
+        args: {
+            doctype: "Room Booking slot",
+            name: PassId,
+            fieldname: {
+                "wave_off_amount" : currentValueOfwaveOffAmount,
+                "wave_off_complimentary" : currentValueOfwaveOffAmount,
+                "verified_by_accounts" : currentValueOfaccountVerification,
+                // "money_collected": money_collected_value,
+                // // "card_status": card_status_value,
+                // "money_collected_date": currentDate
 
-    //             money_collected.value = response.message.money_collected ? response.message.money_collected : "No";
-    //             // card_status.value = response.message.card_status ? response.message.card_status : "Not issued";
-    //             // window.location.reload();
-    //         }
-    //     }
-    // });
+
+            }
+        },
+        callback: function (response) {
+            if (response) {
+                // showToast("Successfully updated!");
+                alert("Record updated successfully!");
+                console.log("the cancallation details are...", response);
+
+                // money_collected.value = response.message.money_collected ? response.message.money_collected : "No";
+                // card_status.value = response.message.card_status ? response.message.card_status : "Not issued";
+                
+                window.location.reload();
+            }
+        }
+    });
 }
 
 //-----------------------------------------------second section--------------------------------------------------------//
