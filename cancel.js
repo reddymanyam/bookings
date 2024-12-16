@@ -2,15 +2,8 @@
 let allBookings = []; // Store all bookings globally
 let currentRecord = null; // Store the current record globally
 let PassId = ""; // Store the ID of the current booking
-let selectedTimes = []; // Store selected times
 let startTimeToShow = "";
 let endTimeToShow = "";
-let roomPrice = 0;
-let pricePerHour = 0;
-let total_booking_price = 0;
-let bookingData = {};
-let confirmed_locations = [];
-let Billing_location_of_client = "";
 let customer_name = "";
 
 // WaveOff Section
@@ -43,7 +36,6 @@ const myDateInput = document.getElementById('myDate');
 const secondSection = document.getElementById('second-section');
 const closeModalBtn = document.querySelector('.closeBtn');
 const closeBtnInvoice = document.querySelector('.closeBtn_invoice');
-const closeBtn_external_client_booking = document.querySelector('.closeBtn_external_client_booking');
 const clearButton = document.getElementById('clearButton');
 
 //All Modals
@@ -86,10 +78,6 @@ closeBtnInvoice.addEventListener('click', function () {
     resetInvoiceModal(); // Reset the modal content if necessary
 });
 
-// Add event listener to close the modal of external client booking
-closeBtn_external_client_booking.addEventListener('click', function () {
-    my_modal_3_external_client_booking.close(); // Close the modal (if you're using a dialog element)
-});
 
 // Reset the modal content, if needed
 function resetModalContent() {
@@ -174,23 +162,6 @@ async function fetchAllBookingsForRecord(record) {
     });
 }
 
-// Function to generate full day time slots
-function generateFullDayTimeSlots() {
-    const fullDaySlots = [];
-    const start = new Date("1970-01-01T00:00:00");
-    const end = new Date("1970-01-01T23:30:00");
-
-    while (start <= end) {
-        const hours = String(start.getHours()).padStart(2, '0');
-        const minutes = String(start.getMinutes()).padStart(2, '0');
-        const timeSlot = `${hours}:${minutes}`;
-        fullDaySlots.push(timeSlot);
-
-        // Increment the time by 30 minutes
-        start.setMinutes(start.getMinutes() + 30);
-    }
-    return fullDaySlots;
-}
 
 // Function to generate time slots for a selected date
 function generateTimeSlots(date, bookingTimesForCurrentRecord, currentRecordDate) {
@@ -1037,10 +1008,6 @@ async function generateNewTimeSlots(date) {
     // First selected slot for range selection
     let firstSelectedSlot = null;
 
-    // Calculate total price based on selected slots
-    function calculateTotalPrice() {
-        return (roomPrice / 2) * getSelectedSlots().length;
-    }
 
     // Retrieve selected slots from DOM
     function getSelectedSlots() {
@@ -1167,42 +1134,6 @@ bookingDateInput.addEventListener('change', function () {
 });
 
 
-// Function to fetch leads when a customer is selected
-function fetchLeadsForCustomer(customerName) {
-
-    // Fetch leads based on the selected customer name
-    frappe.call({
-        method: "frappe.client.get",
-        args: {
-            doctype: 'Customer',
-            fields: ['leads'], // Fetch the 'leads' field (assuming 'leads' is a field containing a list)
-            filters: [['name', '=', customerName]], // Filter by customer name
-        },
-        callback: function (response) {
-            const leadData = response.message.leads; // Assuming 'leads' is an array
-
-            const leadSelectElement = document.getElementById('lead_id');
-            if (leadData && leadData.length > 0) {
-                leadSelectElement.innerHTML = '<option value="">Select Lead</option>'; // Clear previous options
-
-                // Loop through each lead and append it to the select field
-                leadData.forEach(lead => {
-                    const option = document.createElement('option');
-                    option.value = lead.leads;
-                    option.textContent = lead.leads;
-                    leadSelectElement.appendChild(option);
-                    confirmed_locations.push(lead);
-                });
-            } else {
-                leadSelectElement.innerHTML = '<option value="">No Lead id found</option>'
-                alert('No leads found for this customer.');
-            }
-        }
-    });
-}
-
-const customerName = document.getElementById('customer').value;
-
 // Fetch form data for customer, location, room type, etc.
 function fetchFormData(doctype, field, suggestionsElementId, filters = []) {
 
@@ -1264,91 +1195,6 @@ function fetchFormData(doctype, field, suggestionsElementId, filters = []) {
     });
 }
 
-/**
- * Fetches available room types dynamically based on the selected location.
- * 
- * This function uses a server-side call to retrieve a list of unique room types 
- * from the 'Rooms' doctype, filtered by the provided location. It then updates 
- * the UI to display the available room types in a dropdown menu and, if applicable,
- * fetches the available rooms for the selected room type.
- * 
- * @param {string} location - The location for which to fetch room types.
- *        This value is used to filter the rooms by location on the server.
- */
-function fetchRoomTypes(location) {
-    frappe.call({
-        method: "frappe.client.get_list",
-        args: {
-            doctype: 'Rooms', // The doctype to query
-            fields: ['room_type'], // The field we need to fetch (room type)
-            filters: [['location', '=', location]], // Filter by the selected location
-            group_by: 'room_type' // Group results by room type
-        },
-        callback: function (response) {
-            // Get the room type and room dropdown elements
-            const roomTypeSelect = document.getElementById('room_type');
-            roomTypeSelect.innerHTML = ''; // Clear existing room type options
-
-            const roomSelectElement = document.getElementById('room');
-            roomSelectElement.innerHTML = ''; // Clear existing room options
-
-            if (response.message && response.message.length > 0) {
-                // If there are available room types for the location
-                response.message.forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = item.room_type;
-                    option.textContent = item.room_type;
-                    roomTypeSelect.appendChild(option);
-                });
-
-                // Trigger room type change to fetch initial rooms if any room types are available
-                if (roomTypeSelect.options.length > 0) {
-                    roomTypeSelect.selectedIndex = 0;
-                    roomTypeSelect.dispatchEvent(new Event('change')); // Simulate a change event
-                }
-            } else {
-                // If no room types are found for the location
-                const option = document.createElement('option');
-                option.value = '';
-                option.textContent = 'No Room Types found';
-                roomTypeSelect.appendChild(option);
-
-                // No rooms found for this location, update the room dropdown
-                const roomOption = document.createElement('option');
-                roomOption.value = '';
-                roomOption.textContent = 'No rooms found';
-                roomSelectElement.appendChild(roomOption);
-
-                // Reset price per hour display to 0 if no rooms are available
-                document.getElementById('price_per_hour').innerHTML = '0';
-            }
-        }
-    });
-}
-
-function fetchPrice(location, roomType) {
-
-    frappe.call({
-        method: "frappe.client.get",
-        args: {
-            doctype: 'Room Locations',
-            // fields: ['*'],
-            filters: [
-                ['name', '=', location],
-            ]
-        },
-        callback: function (response) {
-            const priceObj = response.message.room_type_details.find((room) => {
-                if (room.room_type == roomType) {
-                    return room.price_per_hour;
-                }
-            })
-            roomPrice = priceObj ? priceObj.price_per_hour : 0;
-            document.getElementById('price_per_hour').innerHTML = priceObj ? priceObj.price_per_hour : 0;
-        }
-    });
-}
-
 // Fetch static data on page load
 document.addEventListener('DOMContentLoaded', () => {
     fetchFormData('Property Location', 'name', null); // No suggestions needed
@@ -1356,197 +1202,3 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchFormDataHome('Property Location', 'name'); // Fetch locations
     fetchFormDataHome('Room Type', 'name'); // Fetch room types
 });
-
-// Event listeners for customer, lead, and email search fields
-document.getElementById('customer').addEventListener('input', function () {
-    const query = this.value;
-    customer_name = this.value;
-    fetchFormData('Customer', 'customer_name', 'customerSuggestions', [['customer_name', 'like', `%${query}%`]]);
-});
-
-// Function to fetch email options when a customer is selected
-function fetchEmailsForCustomer(customerName) {
-    frappe.call({
-        method: "frappe.client.get_list",
-        args: {
-            doctype: "User",
-            fields: ["name"],
-            filters: [["customer", "=", customerName], ['app_user_type', '=', 'Property Customer']], // Filter by selected customer name
-        },
-        callback: function (response) {
-            const emailSelectElement = document.getElementById('email');
-            emailSelectElement.innerHTML = ''; // Clear previous options
-
-            if (response.message.length > 0) {
-                // Add email options if available
-                response.message.forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = item.name;
-                    option.textContent = item.name;
-                    emailSelectElement.appendChild(option);
-                });
-            } else {
-                // If no emails are found, append "No emails found" option
-                const option = document.createElement('option');
-                option.value = '';
-                option.textContent = 'No emails found';
-                emailSelectElement.appendChild(option);
-            }
-        }
-    });
-}
-
-// Event listener for customer suggestions click
-document.getElementById('customerSuggestions').addEventListener('click', function (event) {
-    // Check if the clicked element is a suggestion
-    if (event.target && event.target.matches('div.suggestion-item')) {
-        const selectedCustomer = event.target.textContent; // Get customer name from the suggestion
-
-        // Set the selected customer in the input field
-        document.getElementById('customer').value = selectedCustomer;
-
-        // Fetch emails for the selected customer
-        fetchEmailsForCustomer(selectedCustomer);
-
-        // Clear the suggestions after a selection
-        const customerSuggestionsDiv = document.getElementById('customerSuggestions');
-        customerSuggestionsDiv.innerHTML = ''; // Clear suggestions
-    }
-});
-
-// Event listener for lead id change to show billing location
-document.getElementById('lead_id').addEventListener('change', function () {
-    const leadID = this.value;
-
-    // Filter the confirmed_locations array to find the matching lead
-    let lead = confirmed_locations.filter((lead) => {
-        return lead.leads === leadID; // Ensure that 'lead.leads' matches 'leadID'
-    });
-
-    // Define the locations map
-    let locations = {
-        "NOW": "Novel Office Workhub - Whitefield",
-        "NOC": "Novel Office Central - MG Road",
-        "NBP": "Novel Business Park - Adugodi",
-        "NOQ": "Novel Office Queens - Queens Road",
-        "NOM": "Novel Office Marathahalli",
-        "NTP": "Novel Tech Park - Kudlu Gate",
-    }
-
-    // Check if we found exactly one matching lead
-    if (lead.length === 1) {
-        // Assuming 'lead[0].confirmed_location' is the key for the location map
-        const locationCode = lead[0].confirmed_location; // Update this to match the actual property in the 'lead' object
-        if (locations[locationCode]) {
-            document.getElementById('billing_location').innerHTML = locations[locationCode];
-            Billing_location_of_client = locations[locationCode];
-        } else {
-            document.getElementById('billing_location').innerHTML = "Location not found.";
-        }
-    } else {
-        console.error("Lead not found or multiple leads matched.");
-    }
-});
-
-
-
-// Event listener for location and room type changes to fetch rooms based on filters
-document.getElementById('location').addEventListener('change', function () {
-    const selectedLocation = this.value;
-    // Fetch room types specific to this location
-    fetchRoomTypes(selectedLocation);
-});
-
-document.getElementById('room_type').addEventListener('change', function () {
-    const selectedLocation = document.getElementById('location').value;
-    const selectedRoomType = this.value;
-    fetchRooms(selectedLocation, selectedRoomType);
-    fetchPrice(selectedLocation, selectedRoomType);
-});
-
-// Function to fetch rooms based on selected location and room type
-function fetchRooms(location, roomType) {
-
-    const filters = [
-        ['location', '=', location],
-        ['room_type', '=', roomType]
-    ];
-
-    fetchFormData('Rooms', 'room_name', null, filters); // No suggestions needed for rooms
-}
-
-
-//Appends details to invoice modal
-function showDetails_of_invoice(formData) {
-
-    // Parse the booking_time JSON string into an array
-    const bookingTime = formData.booking_time;
-
-    const startTime = bookingTime[0].split(' to ')[0];
-
-    let endTime = bookingTime[bookingTime.length - 1].split(' to ')[1] || (bookingTime[bookingTime.length - 1].includes(' to ')
-        ? bookingTime[bookingTime.length - 1].split(' to ')[1]
-        : bookingTime[bookingTime.length - 1]);
-
-
-    //Showing details in invoice modal
-    customer_invoice.innerHTML = formData.customer;
-    email_invoice.innerHTML = formData.email;
-    location_invoice.innerHTML = formData.location;
-    lead_invoice.innerHTML = formData.lead_id;
-    date_invoice.innerHTML = formData.booking_date;
-    roomType_invoice.innerHTML = formData.room_type;
-    roomname_invoice.innerHTML = formData.room;
-    startTime_invoice.innerHTML = startTime;
-    endTime_invoice.innerHTML = endTime;
-    billing_location_invoice.innerHTML = Billing_location_of_client;
-
-    bookingData = formData;
-    const bookedHours = getSelectedSlots().length * 0.5;
-
-    if (formData.room_type === "Meeting Room" || formData.room_type === "Conference Room") {
-        getComplimentary(formData.lead_id, formData.room_type, formData.booking_date, formData.rate, bookedHours);
-    } else {
-        complimentary_available.innerHTML = "---"
-        bookingData.total_hours = bookedHours;
-        booked_hours.innerHTML = `${bookedHours} ${bookedHours < 2 ? "hr" : "hrs"}`;
-
-        billable_hours.innerHTML = `${bookedHours} ${bookedHours < 2 ? "hr" : "hrs"}`;
-        price = formData.rate * bookedHours;
-
-        total_price.innerHTML = price;
-        total_booking_price = price;
-        bookingData.price = price;
-
-    }
-    my_modal_3_invoice.showModal();
-}
-
-
-
-// Validate required fields
-function validateForm(data) {
-    if (!data.customer) return "Please enter customer name.";
-    if (!data.lead_id) return "Please select lead id.";
-    if (!data.email) return "Please enter email.";
-    if (!data.location) return "Please select location.";
-    if (!data.room_type) return "Please select room type.";
-    if (!data.room) return "Please select room.";
-    if (!data.booking_date) return "Please select booking date.";
-    if (data.booking_time.length === 0) return "Please select slots.";
-    return null;  // No validation errors
-}
-
-// Function to get selected time slots
-function getSelectedSlots() {
-    const selectedSlots = document.querySelectorAll('.time-slot.selected');
-    return Array.from(selectedSlots).map(slot => {
-        const times = slot.textContent.split(' to ');
-        return times[0];
-    });
-}
-
-
-
-
-// ends here second-section || new booking //
