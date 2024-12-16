@@ -17,12 +17,6 @@
             alt="Novel Logo" title="Novel Office" style="max-width: 230px;">
     </header>
 
-    <!-- Navigation buttons -->
-    <div id="navbar">
-        <div class="sidebar-item p-2 cursor-pointer transition-colors" id="dashboard-btn">Cancelled Bookings</div>
-        <!--<div class="sidebar-item p-2 cursor-pointer transition-colors" id="newbooking-btn">Internal Client Booking</div>-->
-        <!--<div class="sidebar-item p-2 cursor-pointer transition-colors" id="external_newbooking_btn">External Client Booking</div>-->
-    </div>
 
     <!-- First Section -->
     <div class="flex items-center justify-center flex-col pt-2" id="first-section">
@@ -264,20 +258,6 @@
                                                 </tr>
                                             </table>
                                         </div> 
-                                            
-
-                                                    
-
-
-                                                    <!--Card Status -->
-                                                    <!--<div class="mt-2" id="card_status_div">-->
-                                                    <!--<label for="card_status" class="text-xs">Card Status</label>-->
-                                                    <!--<select id="card_status" name="card_status">-->
-                                                    <!--    <option value="Not issued">Not issued</option>-->
-                                                    <!--    <option value="Issued">Issued</option>-->
-                                                    <!--    <option value="Returned">Returned</option>-->
-                                                    <!--</select>-->
-                                                    <!--</div>-->
                                                 </div>
                                             </div>
 
@@ -286,24 +266,7 @@
                                                     Submit
                                                 </button>
                                             </div>
-
-                                            <!-- Toast -->
-                                            <!-- <div class="toast h-[4rem] w-[18rem] bg-green-600"> -->
-                                                <h2>
-                                                    <!-- <i class="fa-solid fa-circle-check bg-green-600"></i> -->
-                                                    <!-- <span>Updated Successful</span> -->
-                                                </h2>
-                                            <!-- </div> -->
-
                                         </div>
-
-
-                                        <!-- <div class="grid grid-cols-2 gap-4 break-words mt-2">
-                                            <div class="flex align-center">
-                                                <label for="myDate">Date: </label>
-                                                <input type="date" id="myDate" value="">
-                                            </div>
-                                        </div> -->
 
                                         <div class="color-shade hidden">
                                             <div style="display: flex; align-items: center; justify-content: center;">
@@ -339,254 +302,33 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- <select class="select select-info w-full max-w-xs statusDropdown">
-                            <option>Approved</option>
-                            <option>Rejected</option>
-                        </select>
-                        <button class="btn btn-active submitBtn">Submit</button> -->
                     </div>
-                </div>
             </dialog>
-        </div>
-    </div>
+        
+    
 
-    <!-- Internal Client Booking Section -->
-    <!-- Second Section -->
-    <div id="second-section">
-        <div class="p-4 font-semibold text-xl flex justify-center">
-            <h3><span class="text-purple-800">New</span> Booking</h3>
-        </div>
-
-        <div class="flex justify-center items-center  mb-20">
-            <form id="bookingForm">
-                <div class="flex flex-row justify-around gap-6">
-                    <!-- Customer -->
-                    <div class="grid grid-cols-2 gap-4 break-words">
-                        <div>
-                            <label for="customer">Customer</label>
-                            <input type="text" id="customer" name="customer" autocomplete="off">
-                            <div id="customerSuggestions" class="suggestions"></div>
-                        </div>
-
-                        <!-- Billing Location -->
-                        <div class="flex-col content-center justify-center h-full">
-                            <h4>Billing Location:-</h4>
-                            <h6 id="billing_location" class="text-purple-800">None</h6>
-                            <!-- <input id="billing_location" readonly></input> -->
-                        </div>
-
-                        <!-- Lead ID -->
-                        <div>
-                            <label for="lead_id">Lead ID</label>
-                            <select id="lead_id">
-                                <option value="">Select Lead</option>
-                            </select>
-                        </div>
-
-                        <!-- Email -->
-                        <div>
-                            <label for="email">Email</label>
-                            <select id="email">
-                            </select>
-                        </div>
-
-                        <!-- Location -->
-                        <div>
-                            <label for="location">Location</label>
-                            <select id="location">
-                                <option value="">Select Location</option>
-                            </select>
-                        </div>
-                        <!-- Room Type -->
-                        <div>
-                            <label for="room_type">Room Type</label>
-                            <select id="room_type">
-                                <!-- <option value="">Select Room Type</option> -->
-                            </select>
-                        </div>
-
-                        <!-- Room -->
-                        <div>
-                            <label for="room">Room</label>
-                            <select id="room">
-                                <!-- <option value="">Select Room</option> -->
-                            </select>
-                        </div>
-
-                        <!-- Booking Date -->
-                        <div>
-                            <label for="booking_date">Booking Date</label>
-                            <input type="date" id="booking_date" name="booking_date" value="">
-                        </div>
-
-                        <!-- Price per hour -->
-                        <div>
-                            <label for="rate">Price per hour (in ₹)</label>
-                            <p name="rate" id="price_per_hour"> 0 </p>
-                        </div>
-
-                        <div class="flex items-center justify-start">
-                            <button type="submit" class="btn btn-active submitBtn">Check out</button>
-                        </div>
-                    </div>
-
-                    <div class="flex-col justify-between items-center">
-                        <!-- Slots Container -->
-                        <div id="newSlotsContainer">
-
-                        </div>
-                        <!-- Clear Selection button -->
-                        <div class="flex justify-center items-center cursor-pointer bg-red-500 font-bold hover:bg-red-700 text-white hover:border-1 hover:border-grey py-2 rounded-md"
-                            id="clearButton">
-                            Clear Selection
-                        </div>
-                    </div>
-                </div>
-
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal to show invoice start -->
     <!-- You can open the modal using ID.showModal() method -->
-    <dialog id="my_modal_3_invoice" class="modal">
-        <div class="modal-box" style="min-width: 50%;">
-            <!--<form method="dialog">-->
-            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 closeBtn_invoice">✕</button>
-            <!--</form>-->
-            <div class="modalContent flex items-center justify-center gap-2 flex-col">
-                <div class="singleContent">
-                    <div class="flex flex-col justify-center items-center w-full h-full">
-                        <div class="">
-                            <div class="p-5 ">
-
-                                <!-- Bookings Details -->
-                                <div>
-                                    <div class="grid grid-cols-2 gap-4 break-words">
-                                        <div>
-                                            <h5 class="text-xs">Customer</h5>
-                                            <h2 class="text-2sm font-bold" id="customer_invoice">-------</h2>
-                                        </div>
-                                        <div>
-                                            <h5 class="text-xs">Email</h5>
-                                            <h2 class="text-2sm font-bold" id="email-field_invoice">-------</h2>
-                                        </div>
-
-                                        <div>
-                                            <h5 class="text-xs">Location</h5>
-                                            <h2 class="text-2sm font-bold" id="location_invoice">-------</h2>
-                                        </div>
-
-                                        <div>
-                                            <h5 class="text-xs">Lead ID</h5>
-                                            <h2 class="text-2sm font-bold" id="leadId_invoice">-------</h2>
-                                        </div>
-
-                                        <div>
-                                            <h5 class="text-xs">Room Type</h5>
-                                            <h2 class="text-2sm font-bold" id="roomType_invoice">-------</h2>
-                                        </div>
-
-                                        <div>
-                                            <h5 class="text-xs">Client Type</h5>
-                                            <h2 class="text-2sm font-bold" id="clientType_invoice">-------</h2>
-                                        </div>
-
-                                        <div>
-                                            <h5 class="text-xs">Date</h5>
-                                            <h2 class="text-2sm font-bold" id="myDate_invoice">-------</h2>
-                                        </div>
-
-                                        <div>
-                                            <h5 class="text-xs text-green-800">Start Time</h5>
-                                            <h2 class="text-2sm font-bold text-green-800" id="startTime_invoice">-------
-                                            </h2>
-                                        </div>
-
-                                        <div>
-                                            <h5 class="text-xs text-red-800">End Time</h5>
-                                            <h2 class="text-2sm font-bold text-red-800" id="endTime_invoice">-------
-                                            </h2>
-                                        </div>
-
-                                        <div>
-                                            <h5 class="text-xs text-purple-800">Billing Location</h5>
-                                            <h2 class="text-2sm font-bold text-purple-800"
-                                                id="billing_location_invoice">-------</h2>
-                                        </div>
-
-                                        <!-- Money collected -->
-                                        <div>
-                                            <label for="money_collected">Money collected</label>
-                                            <select id="money_collected_dropdown">
-                                                <option value="Yes">Yes</option>
-                                            </select>
-                                        </div>
-
-                                        <!-- Card Status -->
-                                        <div>
-                                            <label for="card_status">Card Status</label>
-                                            <select id="card_status_dropdown">
-                                                <option value="Not issued">Not issued</option>
-                                                <option value="Issued">Issued</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="mt-2 mb-2">
-                                        <h5 class="text-xs">Room Name</h5>
-                                        <h2 class="text-2sm font-bold" id="room_name_invoice">-------
-                                        </h2>
-                                    </div>
-
-                                    <!-- Div to show and edit money collected and card status -->
-                                    <div id="editDiv">
-                                        <hr class="new-divider">
-                                        <div class="flex-col justify-around items-center mt-2 gap-2">
-
-                                            <!-- Total hours booked -->
-                                            <div class="flex justify-between w-full mt-4">
-                                                <h2 class="text-2sm font-bold"> Total hours booked </h2>
-                                                <h2 class="text-2sm font-bold" id="booked_hours">-------</h2>
-                                            </div>
-
-                                            <!-- Complimentary hours available -->
-                                            <div class="flex justify-between w-full mt-4">
-                                                <h2 class="text-2sm font-bold"> Complimentary available </h2>
-                                                <h2 class="text-2sm font-bold" id="complimentary_available">-------</h2>
-                                            </div>
-
-                                            <!-- Billable hours -->
-                                            <div class="flex justify-between w-full mt-4">
-                                                <h2 class="text-2sm font-bold"> Billable hours </h2>
-                                                <h2 class="text-2sm font-bold" id="billable_hours">-------</h2>
-                                            </div>
-
-                                            <hr class="mt-4 price-divider">
-
-                                            <!-- Total price -->
-                                            <div class="flex justify-between w-full mt-4">
-                                                <h2 class="text-2sm font-bold"> Price in ₹ (including gst) </h2>
-                                                <h2 class="text-2sm font-bold" id="total_price">-------</h2>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="mt-10">
-                                        <button type="submit" class="btn btn-active confirmBookingbtn">
-                                            Confirm
-                                        </button>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <dialog id="my_modal_3_external_client_booking" class="modal">
+        <div class="modal-box" style="min-width: 95%;">
+            <button
+                class="btn btn-lg btn-circle btn-ghost absolute right-2 top-7 bg-white text-red-800 border-1 border-red closeBtn_external_client_booking">Close</button>
+            <div class="modalContent flex items-center justify-center w-screen h-screen">
+                <iframe src="" frameborder="0" class="h-full w-full" id="iframe"></iframe>
             </div>
         </div>
     </dialog>
-   
+    <!-- External booking end -->
+
+    <!-- Dialog div -->
+    <dialog id="my_modal_1" class="modal">
+        <div class="modal-box">
+            <h3 class="text-lg font-bold">Alert!</h3>
+            <p class="py-4">Kindly login and refresh this page.</p>
+            <div class="modal-action">
+                <a href="/login" target="_blank"><button class="btn">Login</button></a>
+            </div>
+        </div>
+    </dialog>
 
     <!-- Page Footer -->
     <footer>
