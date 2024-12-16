@@ -33,80 +33,23 @@ const slotsContainer = document.getElementById('slotsContainer');
 const myDateInput = document.getElementById('myDate');
 
 // DOM Elements
-const secondSection = document.getElementById('second-section');
 const closeModalBtn = document.querySelector('.closeBtn');
 const closeBtnInvoice = document.querySelector('.closeBtn_invoice');
-const clearButton = document.getElementById('clearButton');
 
 //All Modals
 const modal = document.getElementById('my_modal_3');
 const modal_invoice = document.getElementById('my_modal_3_invoice');
-
-
-//Invoice Modal
-const customer_invoice = document.getElementById("customer_invoice");
-const email_invoice = document.getElementById("email-field_invoice");
-const company_invoice = document.getElementById("company-field_invoice");
-const lead_invoice = document.getElementById("leadId_invoice");
-const roomType_invoice = document.getElementById("roomType_invoice");
-const date_invoice = document.getElementById("myDate_invoice");
-const location_invoice = document.getElementById("location_invoice");
-const roomname_invoice = document.getElementById("room_name_invoice");
-const startTime_invoice = document.getElementById("startTime_invoice");
-const endTime_invoice = document.getElementById("endTime_invoice");
-const billing_location_invoice = document.getElementById("billing_location_invoice");
-const client_type_invoice = document.getElementById("clientType_invoice");
 
 //Billing Details
 const booked_hours = document.getElementById("booked_hours");
 const billable_hours = document.getElementById("billable_hours");
 const total_price = document.getElementById('total_price');
 
-
-clearButton.style.visibility = 'hidden'
-
-
-
 // Add event listener to close the modal
 closeModalBtn.addEventListener('click', function () {
     modal.close(); // Close the modal (if you're using a dialog element)
-    resetModalContent(); // Reset the modal content if necessary
-});
-// Add event listener to close the modal of invoice
-closeBtnInvoice.addEventListener('click', function () {
-    modal_invoice.close(); // Close the modal (if you're using a dialog element)
-    resetInvoiceModal(); // Reset the modal content if necessary
 });
 
-
-// Reset the modal content, if needed
-function resetModalContent() {
-    //For details fields
-    document.querySelector(".pass-id").innerHTML = '';
-    document.querySelector(".status").innerHTML = '';
-    document.querySelector(".card").innerHTML = '';
-    document.getElementById("room_type_show").innerHTML = '';
-    document.getElementById("email-field").innerHTML = '';
-    document.getElementById("fullname-field").innerHTML = '';
-    document.getElementById("clientType").innerHTML = '';
-    document.getElementById("price").innerHTML = '';
-    document.getElementById("location-field").innerHTML = '';
-    document.getElementById("date-field").innerHTML = '';
-    document.getElementById("myDate").innerHTML = '';
-}
-
-function resetInvoiceModal() {
-    //For invoice fields
-    customer_invoice.innerHTML = "";
-    email_invoice.innerHTML = "";
-    location_invoice.innerHTML = "";
-    lead_invoice.innerHTML = "";
-    date_invoice.innerHTML = "";
-    roomType_invoice.innerHTML = "";
-    roomname_invoice.innerHTML = "";
-    startTime_invoice.innerHTML = "";
-    endTime_invoice.innerHTML = "";
-}
 
 // Event Listener for Date Change
 myDateInput.addEventListener('change', function () {
@@ -131,37 +74,6 @@ myDateInput.addEventListener('change', function () {
     generateTimeSlots(selectedDate, bookingTimesForCurrentRecord, currentRecord ? currentRecord.booking_date : null);
 
 });
-
-// Function to fetch all bookings for a specific location, room type, and room based on the current record
-async function fetchAllBookingsForRecord(record) {
-    const filters = [
-        ['location', '=', record.location],
-        ['room_type', '=', record.room_type],
-        ['room', '=', record.room],
-        ['status', '=', 'Cancelled'],
-
-    ];
-
-    return new Promise((resolve, reject) => {
-        frappe.call({
-            method: "frappe.client.get_list",
-            args: {
-                doctype: "Room Booking slot",
-                fields: ['name', 'booking_date', 'booking_time'], // Include 'name' field
-                filters: filters,// Fetch bookings based on location, room type, and room
-            },
-            callback: function (response) {
-                if (response && response.message) {
-                    allBookings = response.message; // Store all relevant bookings globally
-                    resolve();
-                } else {
-                    reject("Failed to fetch filtered bookings.");
-                }
-            }
-        });
-    });
-}
-
 
 // Function to generate time slots for a selected date
 function generateTimeSlots(date, bookingTimesForCurrentRecord, currentRecordDate) {
@@ -272,30 +184,6 @@ function generateTimeSlots(date, bookingTimesForCurrentRecord, currentRecordDate
     }
 }
 
-
-
-// Function to handle a record being opened
-function handleRecordOpen(record) {
-    currentRecord = record; // Store the current record globally
-
-    const recordBookingDate = record.booking_date;
-    let bookingTimesForCurrentRecord = [];
-
-    if (record.booking_time === "Full Day") {
-        // Generate all time slots for the full day
-        bookingTimesForCurrentRecord = generateFullDayTimeSlots();
-    } else {
-        try {
-            bookingTimesForCurrentRecord = JSON.parse(record.booking_time);
-        } catch (error) {
-            console.error("Error parsing booking_time for current record:", error);
-        }
-    }
-
-    // Generate time slots for the record's booking date with the record's booking times
-    generateTimeSlots(recordBookingDate, bookingTimesForCurrentRecord, recordBookingDate);
-}
-
 // Fetch single room booking record data for display
 function fetchSingleData(id) {
     frappe.call({
@@ -309,12 +197,6 @@ function fetchSingleData(id) {
 
             // Store the current record's ID
             PassId = id;
-
-            // Fetch all bookings based on location, room type, and room of the current record
-            await fetchAllBookingsForRecord(record);
-
-            // Call handleRecordOpen() to process the booking times and slots
-            handleRecordOpen(record);
 
             // Also, display the record's details (populate modal, etc.)
             appendDetails(record);
@@ -341,11 +223,11 @@ function appendDetails(data) {
     money_collected_value = data.money_collected;
     // card_status_value = data.card_status;
     document.getElementById("money_wave_off_checkbox").checked = data.wave_off_amount,
-    document.getElementById("complementary_wave_off_checkbox").checked = data.wave_off_complimentary,
-    document.getElementById("accounts_verification_checkbox").checked = data.verified_by_accounts,
+        document.getElementById("complementary_wave_off_checkbox").checked = data.wave_off_complimentary,
+        document.getElementById("accounts_verification_checkbox").checked = data.verified_by_accounts,
 
-    // Hide money collection dropdown for "Deposit" client
-    money_collected_div.style.display = data.client_type === 'Deposit' ? 'none' : 'block';
+        // Hide money collection dropdown for "Deposit" client
+        money_collected_div.style.display = data.client_type === 'Deposit' ? 'none' : 'block';
 
     // Get the current date and subtract 3 days to get the comparison date
     const currentDate = new Date();
@@ -386,8 +268,6 @@ function appendDetails(data) {
         }
     }
 
-
-
     let statusDiv = document.querySelector(".status");
     statusDiv.innerHTML = data.status;
 
@@ -404,8 +284,6 @@ function appendDetails(data) {
             break;
     }
 }
-
-
 
 // ----------------------------------------------------------------Filter Start-------------------------------------------------------------
 // Fetch form data for customer, location, room type, etc.
@@ -587,9 +465,6 @@ async function fetchTotalPages(location, roomType, room, dates, toDate) {
     if (room) {
         filters.push(['room', '=', location + ' - ' + room]);
     }
-
-
-
 }
 
 // Fetching booking data (Approved records)
@@ -725,7 +600,6 @@ async function fetchData(pagePending, checkData = false, location, roomType, roo
     });
 }
 
-
 // Function to toggle pagination buttons
 function togglePaginationButtons(type, dataLength) {
     if (type === 'Approved') {
@@ -752,9 +626,6 @@ function add30Minutes(time) {
 function constructTable(data, slNo, tableName) {
 
     let tableBody = document.querySelector(`.${tableName}`);
-    console.log("dataaa....", data);
-
-
 
     let tableRow = document.createElement("tr");
     tableRow.classList.add("hover", "tableRow");
@@ -795,88 +666,8 @@ function constructTable(data, slNo, tableName) {
         <td>${data.wave_off_amount === 0 ? "No" : "Yes"}</td>
         <td>${data.wave_off_complimentary === 0 ? "No" : "Yes"}</td>
         <td>${data.verified_by_accounts === 0 ? "No" : "Yes"}</td>
-       
     `;
-
     tableBody.appendChild(tableRow);
-}
-
-/*
-*check box verification
-*/
-// Add null checks before adding event listeners
-if (moneyWaveOff) {
-    moneyWaveOff.addEventListener('change', (e) => {
-        currentValueOfwaveOffAmount = e.target.checked;
-
-        if (currentValueOfwaveOffAmount !== previousValueOfwaveOffAmount) {
-            console.log("the condition is...... true");
-            submitRecordBtn.disabled = false;
-        }
-        else {
-            submitRecordBtn.disabled = true;
-        }
-        console.log("Event  = ", e.target.checked);
-        console.log("previousValueOfwaveOffAmount  = ", previousValueOfwaveOffAmount);
-    });
-} else {
-    console.error("Money Wave Off checkbox not found");
-}
-
-if (complementaryWaveOff) {
-    complementaryWaveOff.addEventListener('change', (e) => {
-        currentValueOfwaveOffComplimentary = e.target.checked;
-
-        if (currentValueOfwaveOffComplimentary !== previousValueOfwaveOffComplimentary) {
-            console.log("the condition is...... true");
-            submitRecordBtn.disabled = false;
-        }
-        else {
-            submitRecordBtn.disabled = true;
-        }
-        console.log("Event  = ", e.target.checked);
-        console.log("previousValueOfwaveOffComplimentary = ", previousValueOfwaveOffComplimentary);
-       
-    });
-} else {
-    console.error("Complementary Wave Off checkbox not found");
-}
-
-if (accountVerificationBox) {
-    accountVerificationBox.addEventListener('change', (e) => {
-        currentValueOfaccountVerificationBox = e.target.checked;
-
-        if (currentValueOfaccountVerificationBox !== previousValueOfaccountVerificationBox) {
-            console.log("the condition is...... true");
-            submitRecordBtn.disabled = false;
-        }
-        else {
-            submitRecordBtn.disabled = true;
-        }
-        console.log("Event  = ", e.target.checked);
-        console.log("previousValueOfaccountVerificationBox = ", previousValueOfaccountVerificationBox);
-       
-    });
-} else {
-    console.error("Account Verification checkbox not found");
-}
-
-
-if (submitRecordBtn) {
-    // Initial state - disable submit button
-    submitRecordBtn.disabled = true;
-} else {
-    console.error("Submit record button not found");
-}
-
-function checkCheckboxes() {
-    if (submitRecordBtn) {
-        submitRecordBtn.disabled = !(
-            (moneyWaveOff && moneyWaveOff.checked) ||
-            (complementaryWaveOff && complementaryWaveOff.checked) ||
-            (accountVerificationBox && accountVerificationBox.checked)
-        );
-    }
 }
 
 function showDetails(id, startTime, endTime) {
@@ -884,18 +675,49 @@ function showDetails(id, startTime, endTime) {
         submitRecordBtn.disabled = true;
     }
 
-    resetModalContent();
     startTimeToShow = startTime;
     endTimeToShow = endTime;
     my_modal_3.showModal();
+    
+    // Fetch the specific record to get current checkbox states
+    frappe.call({
+        method: "frappe.client.get",
+        args: {
+            doctype: "Room Booking slot",
+            name: id,
+        },
+        callback: function (response) {
+            const data = response.message;
+            
+            // Set initial checkbox states
+            if (moneyWaveOff) {
+                moneyWaveOff.checked = data.wave_off_amount === 1;
+                previousValueOfwaveOffAmount = data.wave_off_amount === 1;
+            }
+            
+            if (complementaryWaveOff) {
+                complementaryWaveOff.checked = data.wave_off_complimentary === 1;
+                previousValueOfwaveOffComplimentary = data.wave_off_complimentary === 1;
+            }
+            
+            if (accountVerificationBox) {
+                accountVerificationBox.checked = data.verified_by_accounts === 1;
+                previousValueOfaccountVerificationBox = data.verified_by_accounts === 1;
+            }
+
+            // Reset current values to match initial state
+            currentValueOfwaveOffAmount = previousValueOfwaveOffAmount;
+            currentValueOfwaveOffComplimentary = previousValueOfwaveOffComplimentary;
+            currentValueOfaccountVerificationBox = previousValueOfaccountVerificationBox;
+        }
+    });
+    
     fetchSingleData(id);
 }
 
-// Update booking status
 function updateStatus() {
-
     submitRecordBtn.disabled = true;
-  
+
     // Update the booking in the database
     frappe.call({
         method: "frappe.client.set_value",
@@ -903,236 +725,50 @@ function updateStatus() {
             doctype: "Room Booking slot",
             name: PassId,
             fieldname: {
-                "wave_off_amount" : currentValueOfwaveOffAmount,
-                "wave_off_complimentary" : currentValueOfwaveOffComplimentary,
-                "verified_by_accounts" : currentValueOfaccountVerificationBox,
-
+                "wave_off_amount": currentValueOfwaveOffAmount ? 1 : 0,
+                "wave_off_complimentary": currentValueOfwaveOffComplimentary ? 1 : 0,
+                "verified_by_accounts": currentValueOfaccountVerificationBox ? 1 : 0
             }
         },
         callback: function (response) {
             if (response) {
                 alert("Record updated successfully!");
-                console.log("the cancallation details are...", response);
-
+                console.log("the cancellation details are...", response);
+                
+                // Reload the page or update the view
                 window.location.reload();
             }
         }
     });
 }
 
-//-----------------------------------------------second section--------------------------------------------------------//
-
-// Fetch booked slots based on the selected filters
-async function fetchBookedSlots(location, roomType, room, dates) {
-
-    return new Promise((resolve, reject) => {
-        frappe.call({
-            method: "frappe.client.get_list",
-            args: {
-                doctype: "Room Booking slot",
-                fields: ['booking_time'],
-                filters: [
-                    ['location', '=', location],
-                    ['room_type', '=', roomType],
-                    ['room', '=', location + ' - ' + room],
-                    ['booking_date', '=', dates],
-                    ['status', '=', 'Approved']
-                ]
-            },
-            callback: function (response) {
-                if (response.message) {
-                    // Parse each booked slot's time from string into an array and flatten it
-                    const bookedSlots = response.message
-                        .map(slot => JSON.parse(slot.booking_time)) // Parse the string
-                        .flat(); // Flatten the arrays into a single array of time strings
-
-                    // Remove duplicates using Set
-                    const uniqueBookedSlots = [...new Set(bookedSlots)];
-                    resolve(uniqueBookedSlots);
-                } else {
-                    resolve([]); // No booked slots found
-                }
-            },
-            error: function (err) {
-                console.error("Error fetching booked slots:", err);
-                reject(err);
-            }
-        });
+// Modify checkbox event listeners
+if (moneyWaveOff) {
+    moneyWaveOff.addEventListener('change', (e) => {
+        currentValueOfwaveOffAmount = e.target.checked;
+        
+        // Enable submit button only if the value has changed
+        submitRecordBtn.disabled = (currentValueOfwaveOffAmount === previousValueOfwaveOffAmount);
     });
 }
 
-// Generate new time slots and disable booked ones
-async function generateNewTimeSlots(date) {
-    const location = document.getElementById('location').value;
-    const roomType = document.getElementById('room_type').value;
-    const room = document.getElementById('room').value;
-    const selectedDate = document.getElementById('booking_date').value;
-
-    // Get the current date and the date two months ahead
-    const currentDate = new Date();
-    const twoMonthsAhead = new Date(currentDate);
-    twoMonthsAhead.setMonth(currentDate.getMonth() + 2);
-
-    // Check if selectedDate is more than 2 months ahead
-    const selectedDateObj = new Date(selectedDate);
-    if (selectedDateObj > twoMonthsAhead) {
-        alert('You cannot book a date more than 2 months ahead.');
-        const currentDateValue = currentDate.toISOString().split('T')[0];
-        document.getElementById('booking_date').value = currentDateValue;
-        newSlotsContainer.innerHTML = '';
-        generateNewTimeSlots(currentDateValue);
-        return;
-    }
-
-    // Clear existing slots
-    newSlotsContainer.innerHTML = '';
-
-    // Fetch booked slots for the selected date
-    const bookedSlots = await fetchBookedSlots(location, roomType, room, selectedDate);
-
-    const currentTime = currentDate.getTime();
-    const startOfDay = new Date(`${date}T00:00:00`);
-    const endOfDay = new Date(`${date}T23:30:00`);
-
-    // Modified logic to round to the nearest 30-minute interval
-    let start = (new Date(date).toDateString() === currentDate.toDateString()) ?
-        new Date(currentTime) : startOfDay;
-
-    // Round down to the nearest 30-minute interval
-    const minutes = start.getMinutes();
-    start.setMinutes(minutes >= 30 ? 30 : 0);
-
-    // Exit early if the selected time is beyond the available slots
-    if (start > endOfDay) return;
-
-    // First selected slot for range selection
-    let firstSelectedSlot = null;
-
-
-    // Retrieve selected slots from DOM
-    function getSelectedSlots() {
-        return Array.from(newSlotsContainer.getElementsByClassName('selected'));
-    }
-
-    // Iterate over possible slots for the selected day
-    while (start <= endOfDay) {
-        const hours = String(start.getHours()).padStart(2, '0');
-        const minutes = String(start.getMinutes()).padStart(2, '0');
-
-        // Calculate end time by adding 30 minutes
-        const endHours = String(start.getHours() + Math.floor((start.getMinutes() + 30) / 60)).padStart(2, '0');
-        const endMinutes = String((start.getMinutes() + 30) % 60).padStart(2, '0');
-        const timeSlot = `${hours}:${minutes} to ${endHours}:${endMinutes}`;
-
-        let slotElement = document.createElement('div');
-        slotElement.classList.add('time-slot');
-        slotElement.textContent = timeSlot;
-
-        // Mark as disabled if already booked
-        if (bookedSlots.includes(timeSlot)) {
-            slotElement.classList.add('disabled');
-            slotElement.style.backgroundColor = '#999999b8';
-            slotElement.style.color = 'white';
-            slotElement.style.cursor = 'not-allowed';
-        } else {
-            // Handle click event for available slots
-            slotElement.addEventListener('click', () => {
-                if (!firstSelectedSlot) {
-                    // First slot selection
-                    firstSelectedSlot = slotElement;
-                    slotElement.classList.add('selected');
-                    slotElement.style.backgroundColor = '#4caf50';
-                } else {
-                    // Second slot selection: if it's earlier than the first selected slot, swap them
-                    let startTime = new Date(`1970-01-01T${firstSelectedSlot.textContent}:00`);
-                    let endTime = new Date(`1970-01-01T${timeSlot}:00`);
-
-                    if (endTime < startTime) {
-                        // Swap the slots
-                        [firstSelectedSlot, slotElement] = [slotElement, firstSelectedSlot];
-                        [startTime, endTime] = [endTime, startTime]; // Adjust times accordingly
-                    }
-
-                    // Check if any booked slots are in between
-                    let currentSlot = firstSelectedSlot;
-                    let bookedInBetween = false;
-                    while (currentSlot !== slotElement) {
-                        if (bookedSlots.includes(currentSlot.textContent)) {
-                            bookedInBetween = true;
-                            break;
-                        }
-                        currentSlot = currentSlot.nextElementSibling;
-                    }
-
-                    // If a booked slot is found in between, show an alert
-                    if (bookedInBetween) {
-                        alert('Some slots are already booked in between. Please select a different range.');
-                        return; // Exit the function if an alert is shown
-                    }
-
-                    // Select slots between first and current slot
-                    currentSlot = firstSelectedSlot;
-                    while (currentSlot !== slotElement) {
-                        currentSlot.classList.add('selected');
-                        currentSlot.style.backgroundColor = '#4caf50';
-                        currentSlot = currentSlot.nextElementSibling;
-                    }
-                    slotElement.classList.add('selected');
-                    slotElement.style.backgroundColor = '#4caf50';
-                }
-
-                // Conditionally show or hide the clear button
-                const selectedSlots = getSelectedSlots();
-                clearButton.style.visibility = selectedSlots.length > 0 ? 'visible' : 'hidden';
-            });
-        }
-
-        // Append the time slot to the container
-        newSlotsContainer.appendChild(slotElement);
-
-        // Increment time by 30 minutes for the next slot
-        start.setMinutes(start.getMinutes() + 30);
-    }
-
-    // Clear button functionality
-    clearButton.addEventListener('click', () => {
-        const selectedSlots = getSelectedSlots();
-        selectedSlots.forEach(slot => {
-            slot.classList.remove('selected');
-            slot.style.backgroundColor = ''; // Remove background color
-        });
-
-        firstSelectedSlot = null; // Reset first selected slot
-        clearButton.style.visibility = 'hidden';
+if (complementaryWaveOff) {
+    complementaryWaveOff.addEventListener('change', (e) => {
+        currentValueOfwaveOffComplimentary = e.target.checked;
+        
+        // Enable submit button only if the value has changed
+        submitRecordBtn.disabled = (currentValueOfwaveOffComplimentary === previousValueOfwaveOffComplimentary);
     });
 }
 
-// Call generateNewTimeSlots on date change
-const bookingDateInput = document.getElementById('booking_date');
-const newSlotsContainer = document.getElementById('newSlotsContainer');
-
-bookingDateInput.addEventListener('change', function () {
-    const selectedDate = new Date(this.value); // selected date from input
-    const currentDate = new Date(); // current date and time
-
-    // Set the time of selectedDate to the current time
-    selectedDate.setHours(currentDate.getHours());
-    selectedDate.setMinutes(currentDate.getMinutes());
-    selectedDate.setSeconds(currentDate.getSeconds());
-    selectedDate.setMilliseconds(currentDate.getMilliseconds());
-
-    if (selectedDate < currentDate) {
-        // Reset date to current date
-        const currentDateString = currentDate.toISOString().split('T')[0]; // Format date as YYYY-MM-DD
-        bookingDateInput.value = currentDateString;
-        generateNewTimeSlots(currentDateString);
-        alert("Can't select previous date");
-    } else {
-        // Generate new time slots for the selected date
-        generateNewTimeSlots(this.value);
-    }
-});
-
+if (accountVerificationBox) {
+    accountVerificationBox.addEventListener('change', (e) => {
+        currentValueOfaccountVerificationBox = e.target.checked;
+        
+        // Enable submit button only if the value has changed
+        submitRecordBtn.disabled = (currentValueOfaccountVerificationBox === previousValueOfaccountVerificationBox);
+    });
+}
 
 // Fetch form data for customer, location, room type, etc.
 function fetchFormData(doctype, field, suggestionsElementId, filters = []) {
