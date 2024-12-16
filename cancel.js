@@ -13,6 +13,7 @@ let confirmed_locations = [];
 let Billing_location_of_client = "";
 let customer_name = "";
 
+// WaveOff Section
 let previousValueOfwaveOffAmount = "";
 let previousValueOfwaveOffComplimentary = "";
 let previousValueOfaccountVerificationBox = "";
@@ -65,7 +66,6 @@ const billing_location_invoice = document.getElementById("billing_location_invoi
 const client_type_invoice = document.getElementById("clientType_invoice");
 
 //Billing Details
-const complimentary_available = document.getElementById("complimentary_available");
 const booked_hours = document.getElementById("booked_hours");
 const billable_hours = document.getElementById("billable_hours");
 const total_price = document.getElementById('total_price');
@@ -414,6 +414,7 @@ function appendDetails(data) {
             document.getElementById('money_collected_div').style.display = 'block'; // Show dropdown
         }
     }
+
 
 
     let statusDiv = document.querySelector(".status");
@@ -932,7 +933,7 @@ function updateStatus() {
             name: PassId,
             fieldname: {
                 "wave_off_amount" : currentValueOfwaveOffAmount,
-                "wave_off_complimentary" : currentValueOfwaveOffAmount,
+                "wave_off_complimentary" : currentValueOfwaveOffComplimentary,
                 "verified_by_accounts" : currentValueOfaccountVerificationBox,
 
             }
@@ -942,7 +943,7 @@ function updateStatus() {
                 alert("Record updated successfully!");
                 console.log("the cancallation details are...", response);
 
-                // window.location.reload();
+                window.location.reload();
             }
         }
     });
@@ -1448,10 +1449,6 @@ document.getElementById('lead_id').addEventListener('change', function () {
 });
 
 
-// document.getElementById('email').addEventListener('input', function () {
-//     const query = this.value;
-//     fetchFormData('User', 'name', 'emailSuggestions', [['app_user_type', '=', 'Property Customer'], ['customer', '=', `${customer_name}`]]);
-// });
 
 // Event listener for location and room type changes to fetch rooms based on filters
 document.getElementById('location').addEventListener('change', function () {
@@ -1478,97 +1475,7 @@ function fetchRooms(location, roomType) {
     fetchFormData('Rooms', 'room_name', null, filters); // No suggestions needed for rooms
 }
 
-function getComplimentary(lead_id, user_room_type, date, price_per_hour, bookedHours) {
-    // Get Complimentary available data
-    frappe.call({
-        method: "novelite.api.leads_details.get_new_complimentary",
-        args: {
-            lead_id: lead_id,
-            user_room_type: user_room_type,
-            date: date
-        },
-        callback: function (response) {
-            if (response && response.message) {
-                // Parse complimentary hours, defaulting to 0 if not available
-                const complimentary_hours_available =
-                    response.message.complimentary_avaliable === "No complimentary hours"
-                        ? 0
-                        : parseFloat(response.message.complimentary_avaliable || 0);
 
-                let billableHours = 0;
-                let price = 0;
-
-                // Set total hours booked
-                bookingData.total_hours = bookedHours;
-                booked_hours.innerHTML = `${bookedHours} ${bookedHours < 2 ? "hr" : "hrs"}`;
-
-                // Set client type
-                client_type_invoice.innerHTML = response.message.client_type || "---";
-
-                // Handle complimentary hours for specific room types
-                if (user_room_type === "Meeting Room" || user_room_type === "Conference Room" || user_room_type === "Board Room") {
-                    complimentary_available.innerHTML = `${complimentary_hours_available} ${complimentary_hours_available < 2 ? "hr" : "hrs"}`;
-                } else {
-                    complimentary_hours_available = 0;
-                    complimentary_available.innerHTML = "0 hr";
-                }
-
-                // Calculate billable hours and price
-                if (complimentary_hours_available >= bookedHours) {
-                    // Fully covered by complimentary hours
-                    billableHours = 0;
-                    total_price.innerHTML = "0";
-                    billable_hours.innerHTML = "0 hr";
-                    total_booking_price = 0;
-                    bookingData.price = 0;
-                } else {
-                    // Partially covered by complimentary hours
-                    billableHours = bookedHours - complimentary_hours_available;
-                    billable_hours.innerHTML = `${billableHours} ${billableHours < 2 ? "hr" : "hrs"}`;
-
-                    // Calculate price with GST
-                    price = price_per_hour * billableHours;
-                    let gst = price * 0.18;
-                    let totalPrice = price + gst;
-
-                    total_price.innerHTML = totalPrice.toFixed(2);
-                    total_booking_price = totalPrice;
-                    bookingData.price = totalPrice;
-                }
-            } else {
-                // Fallback if no response
-                complimentary_available.innerHTML = "0 hr";
-                booked_hours.innerHTML = `${bookedHours} ${bookedHours < 2 ? "hr" : "hrs"}`;
-                billable_hours.innerHTML = `${bookedHours} ${bookedHours < 2 ? "hr" : "hrs"}`;
-
-                // Calculate full price
-                let price = price_per_hour * bookedHours;
-                let gst = price * 0.18;
-                let totalPrice = price + gst;
-
-                total_price.innerHTML = totalPrice.toFixed(2);
-                total_booking_price = totalPrice;
-                bookingData.price = totalPrice;
-            }
-        },
-        error: function (err) {
-            console.error("Error fetching Complimentary Details:", err);
-
-            // Fallback error handling
-            complimentary_available.innerHTML = "0 hr";
-            booked_hours.innerHTML = `${bookedHours} ${bookedHours < 2 ? "hr" : "hrs"}`;
-            billable_hours.innerHTML = `${bookedHours} ${bookedHours < 2 ? "hr" : "hrs"}`;
-
-            let price = price_per_hour * bookedHours;
-            let gst = price * 0.18;
-            let totalPrice = price + gst;
-
-            total_price.innerHTML = totalPrice.toFixed(2);
-            total_booking_price = totalPrice;
-            bookingData.price = totalPrice;
-        }
-    });
-}
 //Appends details to invoice modal
 function showDetails_of_invoice(formData) {
 
