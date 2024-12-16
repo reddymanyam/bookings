@@ -15,11 +15,11 @@ let customer_name = "";
 
 let previousValueOfwaveOffAmount = "";
 let previousValueOfwaveOffComplimentary = "";
-let previousValueOfaccountVerification = "";
+let previousValueOfaccountVerificationBox = "";
 
 let currentValueOfwaveOffAmount = "";
 let currentValueOfwaveOffComplimentary = "";
-let currentValueOfaccountVerification = "";
+let currentValueOfaccountVerificationBox = "";
 
 // Pagination Variables
 let currentPagePending = 1; // Current page number for pending bookings
@@ -27,34 +27,28 @@ let totalPagesPending = 1; // Total pages for pending bookings
 const itemsPerPage = 10; // Number of items per page for pending bookings
 
 //Submit buttons
-const submitBtn = document.querySelector(".submitBtn");
 const submitRecordBtn = document.querySelector(".submitRecordBtn");
-const confirmBookingbtn = document.querySelector(".confirmBookingbtn");
+
+// checkboxesss
+const moneyWaveOff = document.getElementById("money_wave_off_checkbox");
+const complementaryWaveOff = document.getElementById("complementary_wave_off_checkbox");
+const accountVerificationBox = document.getElementById("accounts_verification_checkbox");
 
 // DOM Elements
 const slotsContainer = document.getElementById('slotsContainer');
 const myDateInput = document.getElementById('myDate');
+
 // DOM Elements
-// const dashboardBtn = document.getElementById("dashboard-btn");
-const newBookingBtn = document.getElementById("newbooking-btn");
-const externalNewbookingBtn = document.getElementById("external_newbooking_btn");
-const firstSection = document.getElementById('first-section');
 const secondSection = document.getElementById('second-section');
-const toast = document.querySelector(".toast");
 const closeModalBtn = document.querySelector('.closeBtn');
 const closeBtnInvoice = document.querySelector('.closeBtn_invoice');
 const closeBtn_external_client_booking = document.querySelector('.closeBtn_external_client_booking');
 const clearButton = document.getElementById('clearButton');
-const money_collected_div = document.getElementById('money_collected_div');
 
 //All Modals
 const modal = document.getElementById('my_modal_3');
 const modal_invoice = document.getElementById('my_modal_3_invoice');
-// const external_client_booking_modal = document.getElementById('my_modal_3_external_client_booking');
 
-//This is to get the values of dropdowns
-const money_collected = document.getElementById('money_collected');
-// const card_status = document.getElementById('card_status');
 
 //Invoice Modal
 const customer_invoice = document.getElementById("customer_invoice");
@@ -76,36 +70,8 @@ const booked_hours = document.getElementById("booked_hours");
 const billable_hours = document.getElementById("billable_hours");
 const total_price = document.getElementById('total_price');
 
-let money_collected_value = "No";
-// let card_status_value = "Not issued";
 
-// Money collected change event listener
-money_collected.addEventListener('change', (e) => {
-    money_collected_value = e.target.value;
-    submitRecordBtn.disabled = false;
-});
-
-// Card status change event listener
-// card_status.addEventListener('change', (e) => {
-//     card_status_value = e.target.value;
-//     submitRecordBtn.disabled = false;
-// });
-
-toast.style.display = 'none';
 clearButton.style.visibility = 'hidden'
-
-//toggle for nav bar
-// Event Listeners for Navigation Buttons
-// dashboardBtn.addEventListener("click", function () {
-//     firstSection.style.display = 'block';
-//     secondSection.style.display = 'none';
-// });
-
-// newBookingBtn.addEventListener("click", function () {
-//     firstSection.style.display = 'none';
-//     secondSection.style.display = 'block';
-// });
-
 
 
 
@@ -403,10 +369,9 @@ function appendDetails(data) {
     // card_status.value = data.card_status;
     money_collected_value = data.money_collected;
     // card_status_value = data.card_status;
-
-    // These are just to show, not to edit
-    document.getElementById("money_collected_show").innerHTML = data.money_collected;
-    document.getElementById("card_status_show").innerHTML = data.card_status;
+    document.getElementById("money_wave_off_checkbox").checked = data.wave_off_amount,
+    document.getElementById("complementary_wave_off_checkbox").checked = data.wave_off_complimentary,
+    document.getElementById("accounts_verification_checkbox").checked = data.verified_by_accounts,
 
     // Hide money collection dropdown for "Deposit" client
     money_collected_div.style.display = data.client_type === 'Deposit' ? 'none' : 'block';
@@ -450,14 +415,6 @@ function appendDetails(data) {
         }
     }
 
-    // Handle the card status condition
-    // if (data.card_status === "Returned") {
-    //     cardStatusReadOnly.style.display = 'block'; // Show card status read-only div
-    //     document.getElementById('card_status_div').style.display = 'none'; // Hide dropdown
-    // } else {
-    //     cardStatusReadOnly.style.display = 'none'; // Hide card status read-only div
-    //     document.getElementById('card_status_div').style.display = 'block'; // Show dropdown
-    // }
 
     let statusDiv = document.querySelector(".status");
     statusDiv.innerHTML = data.status;
@@ -477,37 +434,6 @@ function appendDetails(data) {
 }
 
 
-// Toast Notification
-const toastStyle = document.createElement('style');
-toastStyle.innerHTML = `
-    .toast {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background-color: rgba(0, 0, 0, 0.8);
-        color: white;
-        padding: 10px 20px;
-        border-radius: 5px;
-        z-index: 1000;
-        display: none; /* Hidden by default */
-        transition: opacity 0.5s;
-    }
-`;
-document.head.appendChild(toastStyle);
-
-function showToast(message) {
-    toast.style.display = "block";
-    toast.innerHTML = message;
-
-    // Fade out after 3 seconds
-    setTimeout(() => {
-        toast.style.opacity = 0;
-        setTimeout(() => {
-            toast.style.display = "none";
-            toast.style.opacity = 1; // Reset for next use
-        }, 500);
-    }, 3000);
-}
 
 // ----------------------------------------------------------------Filter Start-------------------------------------------------------------
 // Fetch form data for customer, location, room type, etc.
@@ -784,7 +710,7 @@ async function fetchData(pagePending, checkData = false, location, roomType, roo
     function disableCheckboxesAndButton() {
         if (moneyWaveOff) moneyWaveOff.disabled = true;
         if (complementaryWaveOff) complementaryWaveOff.disabled = true;
-        if (previousValueOfaccountVerification) previousValueOfaccountVerification.disabled = true;
+        if (accountVerificationBox) accountVerificationBox.disabled = true;
         if (submitRecordBtn) submitRecordBtn.disabled = true;
     }
 
@@ -856,7 +782,6 @@ function constructTable(data, slNo, tableName) {
     let tableBody = document.querySelector(`.${tableName}`);
     console.log("dataaa....", data);
 
-    const checkboox = data.date
 
 
     let tableRow = document.createElement("tr");
@@ -877,9 +802,8 @@ function constructTable(data, slNo, tableName) {
 
     previousValueOfwaveOffAmount = data.wave_off_amount === 0 ? false : true;
     previousValueOfwaveOffComplimentary = data.wave_off_complimentary === 0 ? false : true;
-    previousValueOfaccountVerification = data.verified_by_accounts === 0 ? false : true;
+    previousValueOfaccountVerificationBox = data.verified_by_accounts === 0 ? false : true;
 
-    let waveOffSection = document.getElementById(".wave_off_section");
 
     // Create the row with the provided data
     tableRow.setAttribute("onClick", `showDetails('${data.name}', '${startTime}', '${endTime}')`);
@@ -903,17 +827,11 @@ function constructTable(data, slNo, tableName) {
     `;
 
     tableBody.appendChild(tableRow);
-
 }
+
 /*
 *check box verification
 */
-
-// Add null checks and provide fallback
-const moneyWaveOff = document.getElementById("money_wave_off_checkbox");
-const complementaryWaveOff = document.getElementById("complementary_wave_off_checkbox");
-const accountVerificationBox = document.getElementById("accounts_verification_checkbox");
-
 // Add null checks before adding event listeners
 if (moneyWaveOff) {
     moneyWaveOff.addEventListener('change', (e) => {
@@ -936,6 +854,7 @@ if (moneyWaveOff) {
 if (complementaryWaveOff) {
     complementaryWaveOff.addEventListener('change', (e) => {
         currentValueOfwaveOffComplimentary = e.target.checked;
+
         if (currentValueOfwaveOffComplimentary !== previousValueOfwaveOffComplimentary) {
             console.log("the condition is...... true");
             submitRecordBtn.disabled = false;
@@ -953,8 +872,9 @@ if (complementaryWaveOff) {
 
 if (accountVerificationBox) {
     accountVerificationBox.addEventListener('change', (e) => {
-        currentValueOfaccountVerification = e.target.value;
-        if (currentValueOfaccountVerification !== previousValueOfaccountVerification) {
+        currentValueOfaccountVerificationBox = e.target.checked;
+
+        if (currentValueOfaccountVerificationBox !== previousValueOfaccountVerificationBox) {
             console.log("the condition is...... true");
             submitRecordBtn.disabled = false;
         }
@@ -962,7 +882,7 @@ if (accountVerificationBox) {
             submitRecordBtn.disabled = true;
         }
         console.log("Event  = ", e.target.checked);
-        console.log("previousValueOfaccountVerification = ", previousValueOfaccountVerification);
+        console.log("previousValueOfaccountVerificationBox = ", previousValueOfaccountVerificationBox);
        
     });
 } else {
@@ -982,7 +902,7 @@ function checkCheckboxes() {
         submitRecordBtn.disabled = !(
             (moneyWaveOff && moneyWaveOff.checked) ||
             (complementaryWaveOff && complementaryWaveOff.checked) ||
-            (previousValueOfaccountVerification && previousValueOfaccountVerification.checked)
+            (accountVerificationBox && accountVerificationBox.checked)
         );
     }
 }
@@ -1013,24 +933,16 @@ function updateStatus() {
             fieldname: {
                 "wave_off_amount" : currentValueOfwaveOffAmount,
                 "wave_off_complimentary" : currentValueOfwaveOffAmount,
-                "verified_by_accounts" : currentValueOfaccountVerification,
-                // "money_collected": money_collected_value,
-                // // "card_status": card_status_value,
-                // "money_collected_date": currentDate
-
+                "verified_by_accounts" : currentValueOfaccountVerificationBox,
 
             }
         },
         callback: function (response) {
             if (response) {
-                // showToast("Successfully updated!");
                 alert("Record updated successfully!");
                 console.log("the cancallation details are...", response);
 
-                // money_collected.value = response.message.money_collected ? response.message.money_collected : "No";
-                // card_status.value = response.message.card_status ? response.message.card_status : "Not issued";
-                
-                window.location.reload();
+                // window.location.reload();
             }
         }
     });
@@ -1703,34 +1615,7 @@ function showDetails_of_invoice(formData) {
     my_modal_3_invoice.showModal();
 }
 
-// Handle form submission
-submitBtn.addEventListener("click", async (event) => {
-    event.preventDefault();
 
-    // Collect form values
-    const formData = {
-        customer: document.getElementById('customer').value,
-        lead_id: document.getElementById('lead_id').value,
-        email: document.getElementById('email').value,
-        location: document.getElementById('location').value,
-        room_type: document.getElementById('room_type').value,
-        room: document.getElementById('room').value,
-        booking_date: document.getElementById('booking_date').value,
-        booking_time: getSelectedSlots()  // Fetch the selected time slots
-    };
-
-    // Validate the form
-    const validationError = validateForm(formData);
-    if (validationError) {
-        alert(validationError);
-        return;
-    }
-
-    // Add the rate to form data (roomPrice is defined globally)
-    formData.rate = roomPrice;
-    showDetails_of_invoice(formData);
-
-});
 
 // Validate required fields
 function validateForm(data) {
@@ -1754,81 +1639,7 @@ function getSelectedSlots() {
     });
 }
 
-//Confirm button click to create booking record
-confirmBookingbtn.addEventListener("click", createNewBooking);
 
-// Create new booking record
-function createNewBooking() {
-    if (bookingData.booking_time.length === 0) {
-        alert("Please select at least one time slot!");
-        return;
-    }
-    confirmBookingbtn.disabled = true;
 
-    //---------------utility Function ----------------------
-    // Get the current date in yyyy-mm-dd format
-    function getCurrentDate(moneyCollectedValue) {
-        if (moneyCollectedValue === "No") {
-            return null;
-        }
-        const date = new Date();
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Ensure two digits
-        const day = String(date.getDate()).padStart(2, '0'); // Ensure two digits
-        return `${year}-${month}-${day}`;
-    }
-    //---------------utility Function ----------------------
-
-    const moneyCollectedValue = document.getElementById('money_collected_dropdown').value;
-    const currentDate = getCurrentDate(moneyCollectedValue);
-    const cardStatusValue = document.getElementById('card_status_dropdown').value;
-
-    // Create the booking in the database
-    frappe.call({
-        method: "frappe.client.insert",
-        args: {
-            doc: {
-                doctype: "Room Booking slot",
-                customer: bookingData.customer,
-                lead_id: bookingData.lead_id,
-                status: 'Approved',
-                email: bookingData.email,
-                location: bookingData.location,
-                billing_location: Billing_location_of_client,
-                rate: bookingData.rate,
-                price: bookingData.price,
-                total_hours: bookingData.total_hours,
-                room_type: bookingData.room_type,
-                room: bookingData.location + ' - ' + bookingData.room,
-                booking_date: bookingData.booking_date,
-                booking_time: JSON.stringify(bookingData.booking_time),
-                money_collected: moneyCollectedValue,
-                money_collected_date: currentDate,
-                card_status: cardStatusValue,
-                block_temp: 0
-            }
-        },
-        callback: function (response) {
-            setTimeout(() => {
-                location.reload(); // Reload the page after the toast
-            }, 2000);
-            if (response && response.message) {
-                alert("Booking created successfully!");
-                setTimeout(() => {
-                    confirmBookingbtn.disabled = false;
-                    location.reload(); // Reload the page after a delay
-                }, 2000);
-            } else {
-                alert("Error creating booking!");
-                confirmBookingbtn.disabled = false;
-            }
-        },
-        error: function (err) {
-            console.error("Error creating booking:", err);
-            alert("Error creating booking!");
-            confirmBookingbtn.disabled = false;
-        }
-    });
-}
 
 // ends here second-section || new booking //
