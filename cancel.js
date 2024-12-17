@@ -223,11 +223,11 @@ function appendDetails(data) {
     money_collected_value = data.money_collected;
     // card_status_value = data.card_status;
     document.getElementById("money_wave_off_checkbox").checked = data.wave_off_amount,
-        document.getElementById("complementary_wave_off_checkbox").checked = data.wave_off_complimentary,
-        document.getElementById("accounts_verification_checkbox").checked = data.verified_by_accounts,
+    document.getElementById("complementary_wave_off_checkbox").checked = data.wave_off_complimentary,
+    document.getElementById("accounts_verification_checkbox").checked = data.verified_by_accounts,
 
-        // Hide money collection dropdown for "Deposit" client
-        money_collected_div.style.display = data.client_type === 'Deposit' ? 'none' : 'block';
+    // Hide money collection dropdown for "Deposit" client
+    money_collected_div.style.display = data.client_type === 'Deposit' ? 'none' : 'block';
 
     // Get the current date and subtract 3 days to get the comparison date
     const currentDate = new Date();
